@@ -1,0 +1,3 @@
+[submodule "deps/p5.capture"]
+	path = deps/p5.capture
+	url = git@github.com:sevenc-nanashi/p5.capture
