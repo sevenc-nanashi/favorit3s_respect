@@ -5,4 +5,9 @@ import arraybuffer from "vite-plugin-arraybuffer";
 
 export default defineConfig({
 	plugins: [yaml(), hmrify(), arraybuffer()],
+	resolve: {
+		alias: {
+			"~": "/src",
+		},
+	},
 });
