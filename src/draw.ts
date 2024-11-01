@@ -33,8 +33,12 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
       );
     }
 
-    state.currentFrame = Math.floor(audioElement.currentTime * frameRate);
-    p.background(bg);
+    if (isRecording) {
+      state.currentFrame += 1;
+    } else {
+      state.currentFrame = Math.floor(audioElement.currentTime * frameRate);
+    }
+    p.background(...bg);
 
     for (const [path, { draw }] of Object.entries(renderers)) {
       p.push();
@@ -80,15 +84,10 @@ const keydown = (p: p5, state: State) => (e: KeyboardEvent) => {
     audioElement.currentTime = 0;
   }
   if (e.key === "ArrowRight") {
-    state.currentFrame += frameRate * 5;
-    audioElement.currentTime = state.currentFrame / frameRate;
+    audioElement.currentTime += 5;
   }
   if (e.key === "ArrowLeft") {
-    state.currentFrame -= frameRate * 5;
-    if (state.currentFrame < 0) {
-      state.currentFrame = 0;
-    }
-    audioElement.currentTime = state.currentFrame / frameRate;
+    audioElement.currentTime = Math.max(0, audioElement.currentTime - 5);
   }
 };
 

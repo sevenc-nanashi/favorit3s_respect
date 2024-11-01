@@ -1,4 +1,4 @@
-import p5 from "p5";
+import type p5 from "p5";
 import { getCurrentMeasure, getCurrentTick, midi } from "../midi";
 import type { State } from "../state";
 import { dotUnit, smallFont } from "../const";
@@ -28,7 +28,7 @@ export const beatVisualizer = import.meta.hmrify(
         graphics.fill(brightness);
         graphics.noStroke();
         graphics.rect(
-          x - dotUnit * 4 * j - dotUnit * 3,
+          x - dotUnit * 4 * j + dotUnit * 4,
           y - dotUnit * 2 * i - dotUnit * 7,
           dotUnit * 3,
           dotUnit,
@@ -42,12 +42,12 @@ export const beatVisualizer = import.meta.hmrify(
     graphics.textAlign(graphics.CENTER, graphics.BOTTOM);
     graphics.text(
       `${Math.floor((measure * beats) % beats) + 1}`,
-      x - dotUnit * 5,
+      x + dotUnit * 2,
       y + dotUnit * 1.5,
     );
     graphics.text(
       `${Math.floor(measureBeats) + 1}`,
-      x - dotUnit * 1,
+      x + dotUnit * 6,
       y + dotUnit * 1.5,
     );
   },

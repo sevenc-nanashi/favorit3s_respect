@@ -73,7 +73,7 @@ export const drumVisualizer = import.meta.hmrify(
     if (lastClap) {
       const clapTime = midi.header.ticksToSeconds(lastClap.ticks);
       const currentTime = state.currentFrame / frameRate;
-      clapWaveLevel = Math.max(lastClap.velocity - 0.5, 0);
+      clapWaveLevel = Math.max(lastClap.velocity * 0.75 - 0.25, 0);
       clapWaveShift = Math.max(0, 1 - (currentTime - clapTime) / 0.5);
     }
     for (let i = 0; i <= 8; i++) {
@@ -104,11 +104,11 @@ export const drumVisualizer = import.meta.hmrify(
     const currentTick = getCurrentTick(state);
 
     const lastCymbal = [
-      cymbalDrum.notes.findLast(
-        (note) => note.ticks <= currentTick && note.midi === 49,
-      ),
       subDrum.notes.findLast(
         (note) => note.ticks <= currentTick && note.midi === 50,
+      ),
+      cymbalDrum.notes.findLast(
+        (note) => note.ticks <= currentTick && note.midi === 49,
       ),
     ]
       .filter((note) => note !== undefined)
