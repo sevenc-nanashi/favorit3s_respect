@@ -89,6 +89,12 @@ const keydown = (p: p5, state: State) => (e: KeyboardEvent) => {
   if (e.key === "ArrowLeft") {
     audioElement.currentTime = Math.max(0, audioElement.currentTime - 5);
   }
+  if (e.key === "ArrowUp") {
+    audioElement.volume += 0.1;
+  }
+  if (e.key === "ArrowDown") {
+    audioElement.volume -= 0.1;
+  }
 };
 
 if (import.meta.hot) {

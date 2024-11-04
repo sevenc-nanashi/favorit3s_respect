@@ -301,18 +301,48 @@ export const drumVisualizer = import.meta.hmrify(
             continue;
           }
           const width = cellWidth - dotUnit * 4;
-          graphics.rect(
-            x + dotUnit * 2,
-            y + dotUnit * 2,
-            width * progress,
-            (cellHeight - dotUnit * 5) / 2,
-          );
-          graphics.rect(
-            x + dotUnit * 2 + width * (1 - progress),
-            y + dotUnit * 2 + (cellHeight - dotUnit * 5) / 2 + dotUnit,
-            width * progress,
-            (cellHeight - dotUnit * 5) / 2,
-          );
+          if (kicks.some((kick) => kick.ticks === note.ticks)) {
+            graphics.rect(
+              x + dotUnit * 2,
+              y + dotUnit * 2,
+              width * progress,
+              (cellHeight - dotUnit * 6) / 3,
+            );
+            graphics.rect(
+              x + dotUnit * 2 + (width / 2) * (1 - progress),
+              y + dotUnit * 2 + (cellHeight - dotUnit * 6) / 3 + dotUnit,
+              width / 2 * progress,
+              (cellHeight - dotUnit * 6) / 3,
+            );
+            graphics.rect(
+              x + dotUnit * 2 + width / 2,
+              y + dotUnit * 2 + (cellHeight - dotUnit * 6) / 3 + dotUnit,
+              width / 2 * progress,
+              (cellHeight - dotUnit * 6) / 3,
+            );
+            graphics.rect(
+              x + dotUnit * 2 + width * (1 - progress),
+              y +
+                dotUnit * 2 +
+                (cellHeight - dotUnit * 6) * (2 / 3) +
+                dotUnit * 2,
+              width * progress,
+              (cellHeight - dotUnit * 6) / 3,
+            );
+          } else {
+            graphics.rect(
+              x + dotUnit * 2,
+              y + dotUnit * 2,
+              width * progress,
+              (cellHeight - dotUnit * 5) / 2,
+            );
+            graphics.rect(
+              x + dotUnit * 2 + width * (1 - progress),
+              y + dotUnit * 2 + (cellHeight - dotUnit * 5) / 2 + dotUnit,
+              width * progress,
+              (cellHeight - dotUnit * 5) / 2,
+            );
+          }
           break;
         }
         case "clap": {

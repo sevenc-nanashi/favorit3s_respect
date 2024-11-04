@@ -4,29 +4,29 @@ import { getCurrentTick, midi } from "../midi";
 import { dotUnit, frameRate, mainFont } from "../const";
 import type { Track } from "@tonejs/midi";
 
-console.log(midi.tracks);
+const morseBrightness = 192;
 const morseTracks: {
   fg: [number, number, number];
   position: "top" | "left" | "right" | "bottom";
   track: Track;
 }[] = [
   {
-    fg: [255, 64, 64],
+    fg: [morseBrightness, 64, 64],
     position: "top",
     track: midi.tracks.find((track) => track.name === "Subeyue Morse 1")!,
   },
   {
-    fg: [64, 255, 64],
+    fg: [64, morseBrightness, 64],
     position: "left",
     track: midi.tracks.find((track) => track.name === "Subeyue Morse 2")!,
   },
   {
-    fg: [64, 64, 255],
+    fg: [64, 64, morseBrightness],
     position: "right",
     track: midi.tracks.find((track) => track.name === "Subeyue Morse 3")!,
   },
   {
-    fg: [255, 255, 64],
+    fg: [morseBrightness, morseBrightness, 64],
     position: "bottom",
     track: midi.tracks.find((track) => track.name === "Subeyue Morse 4")!,
   },

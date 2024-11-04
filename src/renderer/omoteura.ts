@@ -24,16 +24,20 @@ const baseMidi =
     .reduce((acc, note) => Math.min(acc, note.midi), 127) - 4;
 let bgGraphics: p5.Graphics;
 let gridGraphics: p5.Graphics;
+let gridGraphics2: p5.Graphics;
 const graphicsWidth = (gridDot * numGridX + gridPadding * (numGridX - 1)) * 2 + gridPadding;
 const graphicsHeight = gridDot * numGridY + gridPadding * (numGridY - 1);
 const graphicsPadding = 24;
+
 export const draw = import.meta.hmrify((p: p5, state: State) => {
   if (!bgGraphics) {
     bgGraphics = p.createGraphics(graphicsWidth + graphicsPadding * 2, graphicsHeight + graphicsPadding * 2);
     gridGraphics = p.createGraphics(graphicsWidth + graphicsPadding * 2, graphicsHeight + graphicsPadding * 2);
+    gridGraphics2 = p.createGraphics(graphicsWidth + graphicsPadding * 2, graphicsHeight + graphicsPadding * 2);
   }
   bgGraphics.clear();
   gridGraphics.clear();
+  gridGraphics.image(gridGraphics2, 0, 0);
 
   const leftBaseX = graphicsPadding;
   const rightBaseX = graphicsWidth / 2 + gridPadding / 2 + graphicsPadding;
@@ -133,6 +137,9 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   const drawBaseX = p.width / 2 - graphicsWidth / 2;
   const drawBaseY = p.height / 2 - graphicsHeight / 2;
   p.image(bgGraphics, drawBaseX, drawBaseY);
+  gridGraphics2.clear();
+  gridGraphics2.tint(255, 160);
+  gridGraphics2.image(gridGraphics, 0, 0);
   p.image(gridGraphics, drawBaseX, drawBaseY);
   for (let i = -2; i <= 2; i++) {
     for (let j = -2; j <= 2; j++) {
