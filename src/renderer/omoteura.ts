@@ -48,6 +48,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
     getCurrentMeasure(state) <
       Math.floor(midi.header.ticksToMeasures(firstNote.ticks))
   ) {
+    gridGraphics2.clear();
     return;
   }
 

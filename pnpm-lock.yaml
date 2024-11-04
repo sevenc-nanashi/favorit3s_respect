@@ -20,6 +20,9 @@ importers:
       fft.js:
         specifier: ^4.0.4
         version: 4.0.4
+      midi-file:
+        specifier: 1.2.4
+        version: 1.2.4
       p5:
         specifier: ^1.11.0
         version: 1.11.0

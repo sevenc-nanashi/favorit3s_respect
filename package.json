@@ -21,6 +21,7 @@
 		"@sevenc-nanashi/binaryseeker": "npm:@jsr/sevenc-nanashi__binaryseeker@^1.2.1",
 		"@tonejs/midi": "^2.0.28",
 		"fft.js": "^4.0.4",
+		"midi-file": "1.2.4",
 		"p5": "^1.11.0",
 		"p5.capture": "link:deps/p5.capture"
 	}
