@@ -1,26 +1,16 @@
 import type p5 from "p5";
 import type { State } from "../state";
-import { getCurrentTick } from "../midi";
-import { dotUnit, engFont, fg, frameRate, mainFont } from "../const";
-import { beatVisualizer } from "../components/beatVisualizer";
-import songsRaw from "../assets/songs.txt?raw";
-import songsMidRaw from "../assets/songs.mid?uint8array";
-import { Midi } from "@tonejs/midi";
-import {
-  drumVisualizer,
-  drumVisualizerHeight,
-} from "../components/drumVisualizer";
-import { easeOutQuint } from "../easing";
+import { getCurrentTick, timelineMid } from "../midi";
+import { fg, mainFont } from "../const";
+import timelineMidRaw from "../assets/timeline.mid?uint8array";
 import { parseMidi } from "midi-file";
-import { Note } from "@tonejs/midi/dist/Note";
+import type { Note } from "@tonejs/midi/dist/Note";
 
-const songs = songsRaw.split("\n");
-const songsMid = parseMidi(songsMidRaw);
-const songsTonejsMid = new Midi(songsMidRaw);
-const lyricsTrack = songsMid.tracks.find((track) =>
+const timelineLowMid = parseMidi(timelineMidRaw);
+const lyricsTrack = timelineLowMid.tracks.find((track) =>
   track.some((note) => note.type === "trackName" && note.text === "lyrics"),
 )!;
-const lyricsTonejsMid = songsTonejsMid.tracks.find(
+const lyricsTonejsMid = timelineMid.tracks.find(
   (track) => track.name === "lyrics",
 )!;
 const lyrics = lyricsTrack.reduce(

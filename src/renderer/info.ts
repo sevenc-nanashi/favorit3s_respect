@@ -1,11 +1,9 @@
 import type p5 from "p5";
 import type { State } from "../state";
-import { getCurrentTick } from "../midi";
+import { getCurrentTick, timelineMid } from "../midi";
 import { dotUnit, engFont, fg, frameRate, mainFont } from "../const";
 import { beatVisualizer } from "../components/beatVisualizer";
 import songsRaw from "../assets/songs.txt?raw";
-import songsMidRaw from "../assets/songs.mid?uint8array";
-import { Midi } from "@tonejs/midi";
 import {
   drumVisualizer,
   drumVisualizerHeight,
@@ -13,7 +11,6 @@ import {
 import { easeOutQuint } from "../easing";
 
 const songs = songsRaw.split("\n");
-const songsMid = new Midi(songsMidRaw);
 
 let graphics: p5.Graphics;
 
@@ -30,14 +27,14 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   graphics.fill(...fg);
 
   const currentTick = getCurrentTick(state);
-  const activeSong = songsMid.tracks[0].notes
+  const activeSong = timelineMid.tracks[0].notes
     .filter(
       (note) =>
         note.ticks <= currentTick &&
         note.ticks + note.durationTicks > currentTick,
     )
     .toSorted((a, b) => a.midi - b.midi);
-  const isEnded = currentTick >= songsMid.durationTicks;
+  const isEnded = currentTick >= timelineMid.durationTicks;
   graphics.textAlign(p.LEFT, p.TOP);
   const songListBaseY = p.height - padding - 24 * 3;
   if (isEnded) {
@@ -52,7 +49,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
       const song = songs[index];
       const progress = Math.min(
         (state.currentFrame / frameRate -
-          songsMid.header.ticksToSeconds(note.ticks)) /
+          timelineMid.header.ticksToSeconds(note.ticks)) /
           0.5,
         1,
       );
@@ -65,7 +62,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
         const leftWidth = graphics.textWidth(leftFull);
         graphics.rect(padding + leftWidth, y + 4, 12, 3);
         graphics.rect(padding + leftWidth, y + 12, 12, 3);
-        graphics.rect(padding + leftWidth + 5, y, 3, 21);
+        graphics.rect(padding + leftWidth + 4.5, y, 3, 21);
         graphics.text(right, padding + leftWidth + 15, y);
       } else {
         graphics.text(
