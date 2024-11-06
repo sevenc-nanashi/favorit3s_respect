@@ -117,7 +117,7 @@ const verticalText = (
       graphics.textAlign(graphics.CENTER, graphics.TOP);
       graphics.text(
         char,
-        x + graphics.textSize() / 2,
+        x + graphics.textSize() / 2 + graphics.textSize() / 6,
         y - graphics.textSize() / 2,
       );
     } else {

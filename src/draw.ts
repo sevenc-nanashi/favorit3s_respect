@@ -9,7 +9,10 @@ let isRecording = false;
 
 const renderers = import.meta.glob("./renderer/*.ts", {
   eager: true,
-}) as Record<string, { draw: (p: p5, state: State) => void }>;
+}) as Record<
+  string,
+  { draw: (p: p5, state: State) => void; preload?: (p: p5) => void }
+>;
 const audioElement = new Audio(audio);
 audioElement.autoplay = false;
 
@@ -17,6 +20,14 @@ let registeredCallback: ((e: KeyboardEvent) => void) | null = null;
 let prevMain: p5.Graphics;
 let main: p5.Graphics;
 let lastFrameErrored = false;
+export const preload = import.meta.hmrify((p: p5) => {
+  for (const { preload } of Object.values(renderers)) {
+    if (preload) {
+      preload(p);
+    }
+  }
+  audioElement.load();
+});
 export const draw = import.meta.hmrify((p: p5, state: State) => {
   if (!audioElement.paused && !state.playing) {
     audioElement.pause();

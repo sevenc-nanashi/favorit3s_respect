@@ -52,6 +52,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
     );
     if (lastNote) {
       p.fill(...fg);
+      p.noStroke();
       const progress = Math.max(
         0,
         Math.min(
