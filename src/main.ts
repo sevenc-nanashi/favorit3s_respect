@@ -4,6 +4,7 @@ import "./style.css";
 import { draw, preload } from "./draw.ts";
 import { width, height, frameRate } from "./const.ts";
 import type { State } from "./state.ts";
+
 const instance = new p5((p: p5) => {
   const state: State = {
     currentFrame: 0,
@@ -15,6 +16,7 @@ const instance = new p5((p: p5) => {
   p.setup = () => {
     p.frameRate(frameRate);
     p.createCanvas(width, height);
+    p.noSmooth();
   };
 
   p.draw = () => {

@@ -29,6 +29,9 @@ importers:
       p5.capture:
         specifier: link:deps/p5.capture
         version: link:deps/p5.capture
+      pixelsort:
+        specifier: link:pixelsort/pkg
+        version: link:pixelsort/pkg
     devDependencies:
       '@rollup/plugin-yaml':
         specifier: ^4.1.2
@@ -48,6 +51,9 @@ importers:
       vite-plugin-hmrify:
         specifier: ^0.1.0
         version: 0.1.0
+      vite-plugin-wasm:
+        specifier: ^3.3.0
+        version: 3.3.0(vite@5.4.10)
 
 packages:
 
@@ -424,6 +430,11 @@ packages:
   vite-plugin-hmrify@0.1.0:
     resolution: {integrity: sha512-vx5Kz9Y7OqMTp5R6pabhaz3LYkt1Ezlr9mWxHz5E/YxCQ7w2xH1WyqdoR+vdu+2F8j6he+B8h0rvBFBnZZjE+Q==}
 
+  vite-plugin-wasm@3.3.0:
+    resolution: {integrity: sha512-tVhz6w+W9MVsOCHzxo6SSMSswCeIw4HTrXEi6qL3IRzATl83jl09JVO1djBqPSwfjgnpVHNLYcaMbaDX5WB/pg==}
+    peerDependencies:
+      vite: ^2 || ^3 || ^4 || ^5
+
   vite@5.4.10:
     resolution: {integrity: sha512-1hvaPshuPUtxeQ0hsVH3Mud0ZanOLwVTneA1EgbAM5LhaZEqyPWGRQ7BtaMvUrTDeEaC8pxtj6a6jku3x4z6SQ==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -735,6 +746,10 @@ snapshots:
       - stylus
       - sugarss
       - terser
+
+  vite-plugin-wasm@3.3.0(vite@5.4.10):
+    dependencies:
+      vite: 5.4.10
 
   vite@5.4.10:
     dependencies:
