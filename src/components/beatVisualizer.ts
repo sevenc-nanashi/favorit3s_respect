@@ -5,6 +5,7 @@ import { dotUnit, smallFont } from "../const";
 
 export const beatVisualizer = import.meta.hmrify(
   (graphics: p5.Graphics, state: State, x: number, y: number) => {
+    if (state.currentMeasure <= 1) return;
     const measure = state.currentMeasure;
     const currentTimeSignature = midi.header.timeSignatures.findLast(
       (v) => v.ticks <= state.currentTick,
@@ -24,6 +25,9 @@ export const beatVisualizer = import.meta.hmrify(
         let brightness = 128;
         index += 1;
         brightness = measureBeats > index ? 255 : 128;
+        if (measure <= 1.25 && brightness === 128) {
+          continue;
+        }
 
         graphics.fill(255, brightness);
         graphics.noStroke();

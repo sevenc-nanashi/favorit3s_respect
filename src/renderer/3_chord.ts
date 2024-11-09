@@ -4,6 +4,7 @@ import { timelineMid } from "../midi";
 import chords from "../assets/chord.png";
 import { padding } from "./4_info";
 import { dotUnit, height } from "../const";
+import { easeOutQuint } from "../easing";
 
 const baseMid = 60;
 
@@ -22,6 +23,9 @@ const imageLeftPadding = 44;
 const imageTopPadding = 8;
 const imagePartWidth = 124;
 const rowHeight = 80;
+
+const animationWidth = 4;
+const animationDuration = 0.5;
 
 export const draw = import.meta.hmrify((p: p5, state: State) => {
   if (!chordImage) {
@@ -78,10 +82,28 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   p.line(x, lineY, x, lineY + rowHeight);
   const rate = chordImage.width / destWidth;
 
+  const isContinued = chordTrack.notes.some(
+    (note) => note.ticks + note.durationTicks === activeChord.ticks,
+  );
+  let animationProgress = 1;
+  if (!isContinued) {
+    animationProgress = p.map(
+      state.currentTime,
+      activeChord.time,
+      activeChord.time + animationDuration,
+      0,
+      1,
+      true,
+    );
+  }
+
+  p.tint(255, 255 * easeOutQuint(animationProgress));
   if (isHalf) {
     p.image(
       chordImage,
-      p.width / 2 - partWidth / 2,
+      p.width / 2 -
+        partWidth / 2 -
+        animationWidth * (1 - easeOutQuint(animationProgress)),
       p.height - padding - rowHeight / rate + imageTopPadding + dotUnit * 2,
       partWidth,
       rowHeight / rate,
@@ -93,7 +115,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   } else {
     p.image(
       chordImage,
-      baseX,
+      baseX - animationWidth * (1 - easeOutQuint(animationProgress)),
       p.height - padding - rowHeight / rate + imageTopPadding + dotUnit * 2,
       destWidth,
       rowHeight / rate,

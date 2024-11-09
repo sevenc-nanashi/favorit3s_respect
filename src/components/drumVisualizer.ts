@@ -49,6 +49,10 @@ const shiftHeight = cellHeight + dotUnit * 2;
 const cellPadding = dotUnit * 3;
 const cellSectionSize = cellWidth * 8 + cellPadding * 7 + dotUnit * 2;
 
+const animationStart = 1.25;
+const animationEnd = 1.75;
+const animationMeasure = 0.5;
+
 const color = [64, 192, 255];
 
 export const drumVisualizerWidth =
@@ -78,6 +82,24 @@ export const drumVisualizer = import.meta.hmrify(
     }
     for (let i = 0; i <= 8; i++) {
       graphics.fill(255, i % beats === 0 ? 255 : i > beats ? 64 : 128);
+      const fromLeftIndex = 8 - i;
+      const beatAnimationStart = graphics.map(
+        fromLeftIndex,
+        0,
+        8,
+        animationStart,
+        animationEnd,
+      );
+      const beatAnimationEnd = beatAnimationStart + animationMeasure;
+      const animationProgress = graphics.map(
+        state.currentMeasure,
+        beatAnimationStart,
+        beatAnimationEnd,
+        0,
+        1,
+        true,
+      );
+
       let heightLevel = 0.5;
       if (i % 2 === 1) {
         heightLevel *= 0.5;
@@ -89,15 +111,17 @@ export const drumVisualizer = import.meta.hmrify(
       }
       const height = drumVisualizerHeight * heightLevel;
 
+      const animatedHeight = easeOutQuint(animationProgress) * height;
+
       graphics.rect(
         baseX -
           cymbalWidthPadded -
           cymbalSeparatorWidth -
           i * cellWidth -
           i * cellPadding,
-        baseY - height,
+        baseY - animatedHeight,
         dotUnit,
-        height,
+        animatedHeight,
       );
     }
 

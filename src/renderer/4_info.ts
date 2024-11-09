@@ -66,7 +66,12 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
             timelineMid.header.ticksToSeconds(note.ticks + note.durationTicks) <
               state.currentTime,
         );
-        if (previousEndedNote && previousEndedNote.midi > note.midi) {
+        const previousStartedNote = songsTrack.notes.find(
+          (note) =>
+            previousTime < timelineMid.header.ticksToSeconds(note.ticks) &&
+            timelineMid.header.ticksToSeconds(note.ticks) < state.currentTime,
+        );
+        if (previousEndedNote && previousEndedNote.midi > note.midi && !previousStartedNote) {
           moveProgress = Math.min(
             (state.currentTime -
               timelineMid.header.ticksToSeconds(
@@ -102,10 +107,11 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
     }
   }
 
+  const initialProgress = p.map(state.currentMeasure, 0.5, 2, 0, 1, true);
   graphics.rect(
     padding,
     p.height - padding - 24 * 3 - padding - dotUnit,
-    p.width - padding * 2,
+    (p.width - padding * 2) * easeOutQuint(initialProgress),
     dotUnit,
   );
   beatVisualizer(
