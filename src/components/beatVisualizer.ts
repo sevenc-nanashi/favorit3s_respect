@@ -25,7 +25,7 @@ export const beatVisualizer = import.meta.hmrify(
         index += 1;
         brightness = measureBeats > index ? 255 : 128;
 
-        graphics.fill(brightness);
+        graphics.fill(255, brightness);
         graphics.noStroke();
         graphics.rect(
           x - dotUnit * 4 * j + dotUnit * 4,

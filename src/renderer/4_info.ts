@@ -14,6 +14,8 @@ let graphics: p5.Graphics;
 
 export const padding = 24;
 
+const songFadeDuration = 0.5;
+
 export const draw = import.meta.hmrify((p: p5, state: State) => {
   if (!graphics) {
     graphics = p.createGraphics(p.width, p.height);
@@ -50,9 +52,32 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
       const progress = Math.min(
         (state.currentFrame / frameRate -
           timelineMid.header.ticksToSeconds(note.ticks)) /
-          0.5,
+          songFadeDuration,
         1,
       );
+      let moveProgress = 1;
+      if (progress === 1) {
+        const previousTime = state.currentFrame / frameRate - songFadeDuration;
+        const previousEndedNote = songsTrack.notes.find(
+          (note) =>
+            previousTime <
+              timelineMid.header.ticksToSeconds(
+                note.ticks + note.durationTicks,
+              ) &&
+            timelineMid.header.ticksToSeconds(note.ticks + note.durationTicks) <
+              state.currentFrame / frameRate,
+        );
+        if (previousEndedNote && previousEndedNote.midi > note.midi) {
+          moveProgress = Math.min(
+            (state.currentFrame / frameRate -
+              timelineMid.header.ticksToSeconds(
+                previousEndedNote.ticks + previousEndedNote.durationTicks,
+              )) /
+              songFadeDuration,
+            1,
+          );
+        }
+      }
       graphics.fill(...fg, 255 * (easeOutQuint(progress) * 0.5 + 0.5));
       if (song.includes("ǂ")) {
         const [left, right] = song.split("ǂ");
@@ -68,7 +93,10 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
         graphics.text(
           `${(index + 1).toString().padStart(2, "0")}  ${song}`,
           padding,
-          songListY + i * 24 + 9 * (1 - easeOutQuint(progress)),
+          songListY +
+            i * 24 +
+            9 * (1 - easeOutQuint(progress)) -
+            9 * (1 - easeOutQuint(moveProgress)),
         );
       }
       graphics.fill(...fg);
