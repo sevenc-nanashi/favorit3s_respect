@@ -1,6 +1,6 @@
 import type p5 from "p5";
 import type { State } from "../state";
-import { getCurrentMeasure, getCurrentTick, midi, timelineMid } from "../midi";
+import { timelineMid } from "../midi";
 import chords from "../assets/chord.png";
 import { padding } from "./4_info";
 import { dotUnit, height } from "../const";
@@ -30,15 +30,15 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   }
   const activeChord = chordTrack.notes.findLast(
     (note) =>
-      getCurrentTick(state) >= note.ticks &&
-      getCurrentTick(state) < note.ticks + note.durationTicks,
+      state.currentTick >= note.ticks &&
+      state.currentTick < note.ticks + note.durationTicks,
   );
   if (!activeChord) return;
 
   const index = activeChord.midi - baseMid;
   if (index === -1) return;
 
-  const currentTick = getCurrentTick(state);
+  const currentTick = state.currentTick;
   const progress =
     (currentTick - activeChord.ticks) / activeChord.durationTicks;
 

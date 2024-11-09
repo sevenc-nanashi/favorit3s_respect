@@ -3,13 +3,10 @@ import { registerP5Capture } from "p5.capture";
 import "./style.css";
 import { draw, preload } from "./draw.ts";
 import { width, height, frameRate } from "./const.ts";
-import type { State } from "./state.ts";
+import { State } from "./state.ts";
 
 const instance = new p5((p: p5) => {
-  const state: State = {
-    currentFrame: 0,
-    playing: false,
-  };
+  const state = new State(0, false);
   p.preload = () => {
     preload(p);
   };

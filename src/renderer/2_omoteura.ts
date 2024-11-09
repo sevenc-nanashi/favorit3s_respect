@@ -1,7 +1,7 @@
 import type p5 from "p5";
 import type { State } from "../state";
-import { getCurrentMeasure, getCurrentTick, midi } from "../midi";
-import { dotUnit, frameRate, mainFont } from "../const";
+import { midi } from "../midi";
+import { dotUnit } from "../const";
 import { easeOutQuint } from "../easing";
 
 const leftTrack = midi.tracks.find((track) => track.name === "OmoteUra Left")!;
@@ -25,15 +25,25 @@ const baseMidi =
 let bgGraphics: p5.Graphics;
 let gridGraphics: p5.Graphics;
 let gridGraphics2: p5.Graphics;
-const graphicsWidth = (gridDot * numGridX + gridPadding * (numGridX - 1)) * 2 + gridPadding;
+const graphicsWidth =
+  (gridDot * numGridX + gridPadding * (numGridX - 1)) * 2 + gridPadding;
 const graphicsHeight = gridDot * numGridY + gridPadding * (numGridY - 1);
 const graphicsPadding = 24;
 
 export const draw = import.meta.hmrify((p: p5, state: State) => {
   if (!bgGraphics) {
-    bgGraphics = p.createGraphics(graphicsWidth + graphicsPadding * 2, graphicsHeight + graphicsPadding * 2);
-    gridGraphics = p.createGraphics(graphicsWidth + graphicsPadding * 2, graphicsHeight + graphicsPadding * 2);
-    gridGraphics2 = p.createGraphics(graphicsWidth + graphicsPadding * 2, graphicsHeight + graphicsPadding * 2);
+    bgGraphics = p.createGraphics(
+      graphicsWidth + graphicsPadding * 2,
+      graphicsHeight + graphicsPadding * 2,
+    );
+    gridGraphics = p.createGraphics(
+      graphicsWidth + graphicsPadding * 2,
+      graphicsHeight + graphicsPadding * 2,
+    );
+    gridGraphics2 = p.createGraphics(
+      graphicsWidth + graphicsPadding * 2,
+      graphicsHeight + graphicsPadding * 2,
+    );
   }
   bgGraphics.clear();
   gridGraphics.clear();
@@ -44,8 +54,8 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   const baseY = 0;
 
   if (
-    getCurrentTick(state) >= lastNote.ticks + lastNote.durationTicks ||
-    getCurrentMeasure(state) <
+    state.currentTick >= lastNote.ticks + lastNote.durationTicks ||
+    state.currentMeasure <
       Math.floor(midi.header.ticksToMeasures(firstNote.ticks))
   ) {
     gridGraphics2.clear();
@@ -55,7 +65,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   bgGraphics.noStroke();
   const gridProgress = Math.min(
     1,
-    (getCurrentMeasure(state) -
+    (state.currentMeasure -
       Math.floor(midi.header.ticksToMeasures(firstNote.ticks))) /
       0.5,
   );
@@ -77,8 +87,8 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
 
   const rightActiveNotes = rightTrack.notes.filter(
     (note) =>
-      note.time <= state.currentFrame / frameRate &&
-      note.time + note.duration + fadeDuration > state.currentFrame / frameRate,
+      note.time <= state.currentTime &&
+      note.time + note.duration + fadeDuration > state.currentTime,
   );
 
   for (const note of rightActiveNotes) {
@@ -90,10 +100,10 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
 
     const progress = Math.min(
       1,
-      (state.currentFrame / frameRate - note.time) / fadeDuration,
+      (state.currentTime - note.time) / fadeDuration,
     );
 
-    if (state.currentFrame / frameRate - note.time < lightDuration) {
+    if (state.currentTime - note.time < lightDuration) {
       gridGraphics.noStroke();
       gridGraphics.fill(255, 255);
       gridGraphics.rect(rightX, y, gridDot, gridDot);
@@ -107,8 +117,8 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
 
   const leftActiveNotes = leftTrack.notes.filter(
     (note) =>
-      note.time <= state.currentFrame / frameRate &&
-      note.time + note.duration + fadeDuration > state.currentFrame / frameRate,
+      note.time <= state.currentTime &&
+      note.time + note.duration + fadeDuration > state.currentTime,
   );
 
   for (const note of leftActiveNotes) {
@@ -120,10 +130,10 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
 
     const progress = Math.min(
       1,
-      (state.currentFrame / frameRate - note.time) / fadeDuration,
+      (state.currentTime - note.time) / fadeDuration,
     );
 
-    if (state.currentFrame / frameRate - note.time < lightDuration) {
+    if (state.currentTime - note.time < lightDuration) {
       gridGraphics.noStroke();
       gridGraphics.fill(255, 255);
       gridGraphics.circle(leftX + gridDot / 2, y + gridDot / 2, gridDot);

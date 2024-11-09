@@ -3,7 +3,6 @@ import type { State } from "./state.ts";
 import { bg, frameRate, songLength } from "./const.ts";
 import audio from "./assets/main.wav?url";
 import { P5Capture } from "p5.capture";
-import { getCurrentMeasure, measureToTicks, midi } from "./midi.ts";
 
 let isRecording = false;
 

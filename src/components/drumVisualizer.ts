@@ -1,5 +1,5 @@
 import type p5 from "p5";
-import { getCurrentMeasure, getCurrentTick, midi } from "../midi";
+import { midi } from "../midi";
 import type { State } from "../state";
 import { dotUnit, frameRate } from "../const";
 import type { Track } from "@tonejs/midi";
@@ -59,14 +59,14 @@ export const drumVisualizer = import.meta.hmrify(
     graphics.noStroke();
 
     const currentTimeSignature = midi.header.timeSignatures.findLast(
-      (v) => v.ticks <= getCurrentTick(state),
+      (v) => v.ticks <= state.currentTick,
     )!;
     const beats =
       (currentTimeSignature.timeSignature[0] /
         currentTimeSignature.timeSignature[1]) *
       8;
     const lastClap = mainDrum2.notes.findLast(
-      (note) => note.ticks <= getCurrentTick(state) && note.midi === 40,
+      (note) => note.ticks <= state.currentTick && note.midi === 40,
     );
     let clapWaveShift = 0;
     let clapWaveLevel = 0;
@@ -101,7 +101,7 @@ export const drumVisualizer = import.meta.hmrify(
       );
     }
 
-    const currentTick = getCurrentTick(state);
+    const currentTick = state.currentTick;
 
     const lastCymbal = [
       subDrum.notes.findLast(
@@ -143,7 +143,7 @@ export const drumVisualizer = import.meta.hmrify(
     const openHihats: Note[] = [];
     const claps: Note[] = [];
 
-    const currentMeasure = getCurrentMeasure(state);
+    const currentMeasure = state.currentMeasure;
     const startMeasure = Math.max(0, Math.floor(currentMeasure) - 2);
     const endMeasure = Math.floor(currentMeasure) + 1;
     for (const [track, definition] of drumDefinition) {
@@ -311,13 +311,13 @@ export const drumVisualizer = import.meta.hmrify(
             graphics.rect(
               x + dotUnit * 2 + (width / 2) * (1 - progress),
               y + dotUnit * 2 + (cellHeight - dotUnit * 6) / 3 + dotUnit,
-              width / 2 * progress,
+              (width / 2) * progress,
               (cellHeight - dotUnit * 6) / 3,
             );
             graphics.rect(
               x + dotUnit * 2 + width / 2,
               y + dotUnit * 2 + (cellHeight - dotUnit * 6) / 3 + dotUnit,
-              width / 2 * progress,
+              (width / 2) * progress,
               (cellHeight - dotUnit * 6) / 3,
             );
             graphics.rect(

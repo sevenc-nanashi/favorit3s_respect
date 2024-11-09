@@ -1,7 +1,7 @@
 import type p5 from "p5";
 import type { State } from "../state";
-import { getCurrentTick, midi } from "../midi";
-import { dotUnit, frameRate, mainFont } from "../const";
+import { midi } from "../midi";
+import { dotUnit, frameRate } from "../const";
 import type { Track } from "@tonejs/midi";
 
 const morseBrightness = 192;
@@ -47,8 +47,8 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   for (const { fg, position, track } of morseTracks) {
     const lastNote = track.notes.find(
       (note) =>
-        note.ticks <= getCurrentTick(state) &&
-        note.ticks + note.durationTicks > getCurrentTick(state),
+        note.ticks <= state.currentTick &&
+        note.ticks + note.durationTicks > state.currentTick,
     );
     if (lastNote) {
       p.fill(...fg);

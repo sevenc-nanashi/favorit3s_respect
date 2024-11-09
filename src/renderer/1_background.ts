@@ -4,8 +4,8 @@ import commonVert from "../shaders/common.vert?raw";
 import pixelizeFrag from "../shaders/pixelize.frag?raw";
 import timelineMidRaw from "../assets/timeline.mid?uint8array";
 import { parseMidi } from "midi-file";
-import { dotUnit, frameRate } from "../const";
-import { getCurrentMeasure, getCurrentTick, midi, timelineMid } from "../midi";
+import { dotUnit } from "../const";
+import { timelineMid } from "../midi";
 import type { Note } from "@tonejs/midi/dist/Note";
 import { sort } from "pixelsort";
 import { easeInQuint, easeOutQuint } from "../easing";
@@ -85,7 +85,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   }
 
   mainGraphics.clear();
-  const currentTick = getCurrentTick(state);
+  const currentTick = state.currentTick;
   const activeBackground = backgroundEvents.lyrics.find(
     (note) =>
       note.time <= currentTick &&
@@ -134,7 +134,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
       p.height * minusScale,
     ]);
 
-    const currentMeasure = getCurrentMeasure(state);
+    const currentMeasure = state.currentMeasure;
     pixelizeShader.setUniform(
       "u_wave",
       Math.sin(currentMeasure * Math.PI) * wave * minusScale,

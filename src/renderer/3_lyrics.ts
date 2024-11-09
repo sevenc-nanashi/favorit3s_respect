@@ -1,6 +1,6 @@
 import type p5 from "p5";
 import type { State } from "../state";
-import { getCurrentTick, timelineMid } from "../midi";
+import { timelineMid } from "../midi";
 import { fg, mainFont } from "../const";
 import timelineMidRaw from "../assets/timeline.mid?uint8array";
 import { parseMidi } from "midi-file";
@@ -158,7 +158,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   leftGraphics.textFont(mainFont);
   leftGraphics.fill(...fg);
 
-  const currentTick = getCurrentTick(state);
+  const currentTick = state.currentTick;
   const activeLyrics = lyrics.lyrics
     .filter(
       (lyric) =>

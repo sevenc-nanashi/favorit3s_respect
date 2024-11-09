@@ -1,13 +1,13 @@
 import type p5 from "p5";
-import { getCurrentMeasure, getCurrentTick, midi } from "../midi";
+import { midi } from "../midi";
 import type { State } from "../state";
 import { dotUnit, smallFont } from "../const";
 
 export const beatVisualizer = import.meta.hmrify(
   (graphics: p5.Graphics, state: State, x: number, y: number) => {
-    const measure = getCurrentMeasure(state);
+    const measure = state.currentMeasure;
     const currentTimeSignature = midi.header.timeSignatures.findLast(
-      (v) => v.ticks <= getCurrentTick(state),
+      (v) => v.ticks <= state.currentTick,
     )!;
     const beats =
       (currentTimeSignature.timeSignature[0] /

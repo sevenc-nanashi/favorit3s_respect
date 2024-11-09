@@ -1,7 +1,7 @@
 import type p5 from "p5";
 import type { State } from "../state";
-import { getCurrentTick, timelineMid } from "../midi";
-import { dotUnit, fg, frameRate, mainFont } from "../const";
+import { timelineMid } from "../midi";
+import { dotUnit, fg, mainFont } from "../const";
 import { beatVisualizer } from "../components/beatVisualizer";
 import songsRaw from "../assets/songs.txt?raw";
 import { drumVisualizer } from "../components/drumVisualizer";
@@ -26,7 +26,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   graphics.textFont(mainFont);
   graphics.fill(...fg);
 
-  const currentTick = getCurrentTick(state);
+  const currentTick = state.currentTick;
   const activeSong = songsTrack.notes
     .filter(
       (note) =>
@@ -50,14 +50,13 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
       const index = note.midi - 60;
       const song = songs[index];
       const progress = Math.min(
-        (state.currentFrame / frameRate -
-          timelineMid.header.ticksToSeconds(note.ticks)) /
+        (state.currentTime - timelineMid.header.ticksToSeconds(note.ticks)) /
           songFadeDuration,
         1,
       );
       let moveProgress = 1;
       if (progress === 1) {
-        const previousTime = state.currentFrame / frameRate - songFadeDuration;
+        const previousTime = state.currentTime - songFadeDuration;
         const previousEndedNote = songsTrack.notes.find(
           (note) =>
             previousTime <
@@ -65,11 +64,11 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
                 note.ticks + note.durationTicks,
               ) &&
             timelineMid.header.ticksToSeconds(note.ticks + note.durationTicks) <
-              state.currentFrame / frameRate,
+              state.currentTime,
         );
         if (previousEndedNote && previousEndedNote.midi > note.midi) {
           moveProgress = Math.min(
-            (state.currentFrame / frameRate -
+            (state.currentTime -
               timelineMid.header.ticksToSeconds(
                 previousEndedNote.ticks + previousEndedNote.durationTicks,
               )) /

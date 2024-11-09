@@ -1,7 +1,7 @@
 import type p5 from "p5";
 import type { State } from "../state";
-import { getCurrentTick, midi } from "../midi";
-import { dotUnit, frameRate, mainFont } from "../const";
+import { midi } from "../midi";
+import { dotUnit } from "../const";
 import type { Note } from "@tonejs/midi/dist/Note";
 import { easeOutQuint } from "../easing";
 
@@ -36,14 +36,14 @@ const fadeOutDuration = 0.1;
 export const draw = import.meta.hmrify((p: p5, state: State) => {
   const currentSection = sections.find(
     (section) =>
-      midi.header.ticksToMeasures(getCurrentTick(state)) >=
+      midi.header.ticksToMeasures(state.currentTick) >=
         midi.header.ticksToMeasures(section.notes[0].ticks) &&
-      (midi.header.ticksToMeasures(getCurrentTick(state)) <
+      (midi.header.ticksToMeasures(state.currentTick) <
         midi.header.ticksToMeasures(
           section.notes[section.notes.length - 1].ticks +
             section.notes[section.notes.length - 1].durationTicks,
         ) ||
-        state.currentFrame / frameRate <
+        state.currentTime <
           midi.header.ticksToSeconds(
             section.notes[section.notes.length - 1].ticks +
               section.notes[section.notes.length - 1].durationTicks,
@@ -55,7 +55,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
 
   const fadeOutProgress = Math.max(
     0,
-    (state.currentFrame / frameRate -
+    (state.currentTime -
       midi.header.ticksToSeconds(
         currentSection.notes[currentSection.notes.length - 1].ticks +
           currentSection.notes[currentSection.notes.length - 1].durationTicks,
@@ -84,11 +84,11 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
 
     let brightness = 64;
     if (
-      note.ticks <= getCurrentTick(state) &&
-      getCurrentTick(state) <= note.ticks + note.durationTicks
+      note.ticks <= state.currentTick &&
+      state.currentTick <= note.ticks + note.durationTicks
     ) {
       brightness = 255;
-    } else if (note.ticks < getCurrentTick(state)) {
+    } else if (note.ticks < state.currentTick) {
       brightness = 200;
     }
 
