@@ -1,20 +1,18 @@
 import type p5 from "p5";
 import type { State } from "../state";
 import { getCurrentTick, timelineMid } from "../midi";
-import { dotUnit, engFont, fg, frameRate, mainFont } from "../const";
+import { dotUnit, fg, frameRate, mainFont } from "../const";
 import { beatVisualizer } from "../components/beatVisualizer";
 import songsRaw from "../assets/songs.txt?raw";
-import {
-  drumVisualizer,
-  drumVisualizerHeight,
-} from "../components/drumVisualizer";
+import { drumVisualizer } from "../components/drumVisualizer";
 import { easeOutQuint } from "../easing";
 
 const songs = songsRaw.split("\n");
+const songsTrack = timelineMid.tracks.find((track) => track.name === "songs")!;
 
 let graphics: p5.Graphics;
 
-const padding = 24;
+export const padding = 24;
 
 export const draw = import.meta.hmrify((p: p5, state: State) => {
   if (!graphics) {
@@ -27,14 +25,16 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   graphics.fill(...fg);
 
   const currentTick = getCurrentTick(state);
-  const activeSong = timelineMid.tracks[0].notes
+  const activeSong = songsTrack.notes
     .filter(
       (note) =>
         note.ticks <= currentTick &&
         note.ticks + note.durationTicks > currentTick,
     )
     .toSorted((a, b) => a.midi - b.midi);
-  const isEnded = currentTick >= timelineMid.durationTicks;
+  const isEnded = songsTrack.notes.every(
+    (note) => note.ticks + note.durationTicks < currentTick,
+  );
   graphics.textAlign(p.LEFT, p.TOP);
   const songListBaseY = p.height - padding - 24 * 3;
   if (isEnded) {
@@ -80,19 +80,6 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
     p.height - padding - 24 * 3 - padding - dotUnit,
     p.width - padding * 2,
     dotUnit,
-  );
-  graphics.fill(255, 0, 0);
-  graphics.rect(
-    p.width / 2 - 260,
-    p.height - padding - drumVisualizerHeight,
-    240,
-    drumVisualizerHeight,
-  );
-  graphics.rect(
-    p.width / 2 + 20,
-    p.height - padding - drumVisualizerHeight,
-    240,
-    drumVisualizerHeight,
   );
   beatVisualizer(
     graphics,
