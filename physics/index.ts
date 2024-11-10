@@ -47,6 +47,8 @@ const absLowClamp = (value: number, min: number) => {
 const absHighClamp = (value: number, max: number) => {
   return Math.abs(value) > max ? Math.sign(value) * max : value;
 };
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, value));
 
 const shiftedBodies = [] as number[];
 const shiftChars = ["、", "。"];
@@ -63,13 +65,20 @@ const attracts = [
     const isEitherSmall =
       smallBodies.includes(bodyA.id) || smallBodies.includes(bodyB.id);
 
-    if (distance >= (isEitherSmall ? 10 : 29)) return;
-    const force = {
-      x: absHighClamp(
-        3e-2 / absLowClamp(bodyA.position.x - bodyB.position.x, 1),
-        1e-2,
+    const maxDistance = isEitherSmall ? 10 : 38;
+    const unitVector = matter.Vector.normalise({ x: dx, y: dy });
+    const forceUnclamped = matter.Vector.mult(
+      unitVector,
+      clamp(
+        (1 / absLowClamp(distance, 1)) *
+          (1 - Math.min(distance / maxDistance, 1)) ** 3.2,
+        0,
+        1,
       ),
-      y: 1e-2 / absLowClamp(bodyA.position.y - bodyB.position.y, 1),
+    );
+    const force = {
+      x: absHighClamp(forceUnclamped.x * 2, 2),
+      y: absHighClamp(forceUnclamped.y, 2),
     };
     if (!Number.isFinite(force.x) || !Number.isFinite(force.y)) return;
 
@@ -79,7 +88,10 @@ const attracts = [
   },
 ];
 
-const bodyInfo = new Map<number, { char: string; center: matter.Vector }>();
+const bodyInfo = new Map<
+  number,
+  { char: string; center: matter.Vector; side: "left" | "right" }
+>();
 for (let cy = 0; cy < image.height; cy += imageGridUnit) {
   for (let cx = 0; cx < image.width; cx += imageGridUnit) {
     const bodies = [];
@@ -89,7 +101,7 @@ for (let cy = 0; cy < image.height; cy += imageGridUnit) {
     let xShift = 0;
     let yShift = 0;
     if (shiftChars.includes(char)) {
-      xShift = (size * imageGridUnit) / 2;
+      xShift = (size * imageGridUnit) / 2 + size;
       yShift = (-size * imageGridUnit) / 2;
     }
     for (let x = 0; x < imageGridUnit; x++) {
@@ -154,7 +166,7 @@ for (let cy = 0; cy < image.height; cy += imageGridUnit) {
       if (smallChars.includes(char)) {
         smallBodies.push(body.id);
       }
-      bodyInfo.set(body.id, { char, center });
+      bodyInfo.set(body.id, { char, center, side: "left" });
       matter.World.add(engine.world, body);
     }
     if (rightRowIndex !== -1) {
@@ -180,12 +192,12 @@ for (let cy = 0; cy < image.height; cy += imageGridUnit) {
       if (smallChars.includes(char)) {
         smallBodies.push(body.id);
       }
-      bodyInfo.set(body.id, { char, center });
+      bodyInfo.set(body.id, { char, center, side: "right" });
       matter.World.add(engine.world, body);
     }
   }
 }
-const groundHeight = 36;
+const groundHeight = 128;
 const ground = matter.Bodies.rectangle(
   1920 / 2,
   1080 + groundHeight / 2 - 124,
@@ -236,8 +248,7 @@ if (location.search.includes("bake")) {
         x: body.position.x,
         y: body.position.y,
         angle: body.angle,
-        char: info.char,
-        center: info.center,
+        ...info,
       });
     }
     result.push(frame);

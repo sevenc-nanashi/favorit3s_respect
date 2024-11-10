@@ -8,7 +8,7 @@ app.post("/save", async (c) => {
   const body = await c.req.json();
   await fs.writeFile(
     `${import.meta.dirname}/../src/assets/gravity.json`,
-    JSON.stringify(body, null, 2),
+    JSON.stringify(body),
   );
   console.log("Saved gravity.json");
 
