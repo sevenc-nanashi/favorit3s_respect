@@ -41,6 +41,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   if (shiftProgress === 1) return;
   const groundShift = 360 * shiftProgress;
   const initialProgress = p.map(state.currentMeasure, 0.5, 2, 0, 1, true);
+  p.noStroke();
   p.fill(...fg);
   p.rect(
     padding,
