@@ -1,30 +1,42 @@
 {
-	"name": "-20240815-movie-test",
-	"private": true,
-	"version": "0.0.0",
-	"type": "module",
-	"scripts": {
-		"dev": "vite",
-		"build": "tsc && vite build",
-		"preview": "vite preview"
-	},
-	"devDependencies": {
-		"@rollup/plugin-yaml": "^4.1.2",
-		"@types/p5": "^1.7.6",
-		"typescript": "^5.6.3",
-		"vite": "^5.4.10",
-		"vite-plugin-arraybuffer": "^0.0.8",
-		"vite-plugin-hmrify": "^0.1.0",
-		"vite-plugin-wasm": "^3.3.0"
-	},
-	"dependencies": {
-		"@biomejs/biome": "^1.9.4",
-		"@sevenc-nanashi/binaryseeker": "npm:@jsr/sevenc-nanashi__binaryseeker@^1.2.1",
-		"@tonejs/midi": "^2.0.28",
-		"fft.js": "^4.0.4",
-		"midi-file": "1.2.4",
-		"p5": "^1.11.0",
-		"p5.capture": "link:deps/p5.capture",
-		"pixelsort": "link:pixelsort/pkg"
-	}
+  "name": "-20240815-movie-test",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:physics": "run-p dev:physics:vite dev:physics:save",
+    "dev:physics:vite": "vite ./physics",
+    "dev:physics:save": "tsx ./physics/saveServer.ts",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@rollup/plugin-yaml": "^4.1.2",
+    "@types/matter-js": "^0.19.7",
+    "@types/node": "^22.9.0",
+    "@types/p5": "^1.7.6",
+    "npm-run-all2": "^7.0.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10",
+    "vite-plugin-arraybuffer": "^0.0.8",
+    "vite-plugin-hmrify": "^0.1.0",
+    "vite-plugin-wasm": "^3.3.0"
+  },
+  "dependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@hono/node-server": "^1.13.5",
+    "@napi-rs/canvas": "^0.1.60",
+    "@sevenc-nanashi/binaryseeker": "npm:@jsr/sevenc-nanashi__binaryseeker@^1.2.1",
+    "@tonejs/midi": "^2.0.28",
+    "fft.js": "^4.0.4",
+    "hono": "^4.6.9",
+    "matter-attractors": "0.1.6",
+    "matter-js": "0.20.0",
+    "midi-file": "1.2.4",
+    "p5": "^1.11.0",
+    "p5.capture": "link:deps/p5.capture",
+    "pixelsort": "link:pixelsort/pkg"
+  }
 }

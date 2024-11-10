@@ -107,13 +107,6 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
     }
   }
 
-  const initialProgress = p.map(state.currentMeasure, 0.5, 2, 0, 1, true);
-  graphics.rect(
-    padding,
-    p.height - padding - 24 * 3 - padding - dotUnit,
-    (p.width - padding * 2) * easeOutQuint(initialProgress),
-    dotUnit,
-  );
   beatVisualizer(
     graphics,
     state,
