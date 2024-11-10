@@ -59,21 +59,28 @@ const attracts = [
   (bodyA: matter.Body, bodyB: matter.Body) => {
     if (bodyA.isStatic || bodyB.isStatic) return;
     if (bodyA.position.y <= 0 || bodyB.position.y <= 0) return;
+    if (bodyA.position.x <= 0 || bodyB.position.x <= 0) return;
+    if (bodyA.position.x >= 1920 || bodyB.position.x >= 1920) return;
     const dx = bodyA.position.x - bodyB.position.x;
     const dy = bodyA.position.y - bodyB.position.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
     const isEitherSmall =
       smallBodies.includes(bodyA.id) || smallBodies.includes(bodyB.id);
+    const isEitherShifted =
+      shiftedBodies.includes(bodyA.id) || shiftedBodies.includes(bodyB.id);
+    const isDifferentGroup =
+      bodyInfo.get(bodyA.id)?.side !== bodyInfo.get(bodyB.id)?.side;
+    if (isEitherShifted) return;
 
-    const maxDistance = isEitherSmall ? 10 : 38;
+    const maxDistance = (isEitherSmall ? 10 : 38) * (isDifferentGroup ? 1 : 1.2);
     const unitVector = matter.Vector.normalise({ x: dx, y: dy });
     const forceUnclamped = matter.Vector.mult(
       unitVector,
       clamp(
-        (1 / absLowClamp(distance, 1)) *
-          (1 - Math.min(distance / maxDistance, 1)) ** 3.2,
+        (1 / absLowClamp(distance, 0.7)) *
+          (1 - Math.min(distance / maxDistance, 1)) ** 3,
         0,
-        1,
+        4,
       ),
     );
     const force = {
@@ -104,6 +111,10 @@ for (let cy = 0; cy < image.height; cy += imageGridUnit) {
       xShift = (size * imageGridUnit) / 2 + size;
       yShift = (-size * imageGridUnit) / 2;
     }
+    const color = `#${(Math.random() * 255 ** 3)
+      .toString(16)
+      .padStart(6, "0")
+      .slice(0, 6)}`;
     for (let x = 0; x < imageGridUnit; x++) {
       for (let y = 0; y < imageGridUnit; y++) {
         const index = cx + x + (cy + y) * image.width;
@@ -115,7 +126,7 @@ for (let cy = 0; cy < image.height; cy += imageGridUnit) {
           size,
           {
             render: {
-              fillStyle: "white",
+              fillStyle: color,
             },
           },
         );
@@ -128,7 +139,7 @@ for (let cy = 0; cy < image.height; cy += imageGridUnit) {
           size,
           {
             render: {
-              fillStyle: "white",
+              fillStyle: color,
             },
           },
         );
@@ -264,4 +275,10 @@ if (location.search.includes("bake")) {
   matter.Render.run(render);
   // run the Engine
   matter.Runner.run(runner, engine);
+
+  document.body.addEventListener("keypress", (e) => {
+    if (e.key === " ") {
+      runner.enabled = !runner.enabled;
+    }
+  });
 }
