@@ -5,6 +5,7 @@ import { dotUnit, fg, mainFont } from "../const";
 import bakedGravityRaw from "../assets/gravity.json";
 import { padding } from "./4_info";
 import { easeOutQuint } from "../easing";
+import { useGraphicContext } from "../utils";
 
 type GravityInfo = {
   x: number;
@@ -31,6 +32,7 @@ const doDraw = (
   xShift: number,
   yShift: number,
 ) => {
+  using _context = useGraphicContext(p);
   p.rotate(info.angle);
   let centerX = info.center.x - 36 / 2 + xShift;
   let centerY = info.center.y + yShift;
@@ -50,7 +52,6 @@ const doDraw = (
   const shiftedX = Math.cos(angleRad) * x + Math.sin(angleRad) * y;
   const shiftedY = -Math.sin(angleRad) * x + Math.cos(angleRad) * y;
   p.text(info.char, shiftedX, shiftedY);
-  p.resetMatrix();
 };
 export const draw = import.meta.hmrify((p: p5, state: State) => {
   const gravity = gravityTrack.notes.findLast(

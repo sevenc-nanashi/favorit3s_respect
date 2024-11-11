@@ -5,6 +5,7 @@ import { fg, mainFont } from "../const";
 import timelineMidRaw from "../assets/timeline.mid?uint8array";
 import { parseMidi } from "midi-file";
 import type { Note } from "@tonejs/midi/dist/Note";
+import { useGraphicContext } from "../utils";
 
 const timelineLowMid = parseMidi(timelineMidRaw);
 const lyricsTrack = timelineLowMid.tracks.find((track) =>
@@ -108,7 +109,7 @@ const verticalText = (
       y = startY;
       continue;
     }
-    graphics.push();
+    using _context = useGraphicContext(graphics);
     if (bracketChars.includes(char)) {
       graphics.rotate(Math.PI / 2);
       graphics.textAlign(graphics.LEFT, graphics.CENTER);
@@ -125,7 +126,6 @@ const verticalText = (
       graphics.text(replacementChars[char] ?? char, x, y);
     }
     y += graphics.textSize();
-    graphics.pop();
   }
 };
 

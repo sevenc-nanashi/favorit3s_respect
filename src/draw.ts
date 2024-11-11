@@ -3,6 +3,7 @@ import type { State } from "./state.ts";
 import { bg, frameRate, songLength } from "./const.ts";
 import audio from "./assets/main.wav?url";
 import { P5Capture } from "p5.capture";
+import { useGraphicContext } from "./utils.ts";
 
 let isRecording = false;
 
@@ -52,9 +53,8 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
     p.background(...bg);
 
     for (const [path, { draw }] of Object.entries(renderers)) {
-      p.push();
+      using _context = useGraphicContext(p);
       draw(p, state);
-      p.pop();
     }
 
     lastFrameErrored = false;

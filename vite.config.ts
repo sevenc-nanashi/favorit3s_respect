@@ -6,6 +6,9 @@ import wasm from "vite-plugin-wasm";
 
 export default defineConfig({
   plugins: [yaml(), hmrify(), arraybuffer(), wasm()],
+  esbuild: {
+    target: "es2022",
+  },
   resolve: {
     alias: {
       "~": "/src",
