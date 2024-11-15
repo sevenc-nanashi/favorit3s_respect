@@ -11,6 +11,16 @@ const morseTracks: {
   track: Track;
 }[] = [
   {
+    fg: [64, 255, 64],
+    position: "left",
+    track: midi.tracks.find((track) => track.name === "Subeana Morse 1")!,
+  },
+  {
+    fg: [255, 255, 64],
+    position: "right",
+    track: midi.tracks.find((track) => track.name === "Subeana Morse 2")!,
+  },
+  {
     fg: [morseBrightness, 64, 64],
     position: "top",
     track: midi.tracks.find((track) => track.name === "Subeyue Morse 1")!,

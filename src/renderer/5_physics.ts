@@ -18,7 +18,7 @@ type GravityInfo = {
 const bakedGravity = bakedGravityRaw as GravityInfo[][];
 
 const gravityTrack = timelineMid.tracks.find(
-  (track) => track.name === "gravity",
+  (track) => track.name === "misc",
 )!;
 const gravityMidi = 60;
 const shiftMidi = 61;

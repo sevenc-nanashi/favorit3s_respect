@@ -72,7 +72,8 @@ const attracts = [
       bodyInfo.get(bodyA.id)?.side !== bodyInfo.get(bodyB.id)?.side;
     if (isEitherShifted) return;
 
-    const maxDistance = (isEitherSmall ? 10 : 38) * (isDifferentGroup ? 1 : 1.2);
+    const maxDistance =
+      (isEitherSmall ? 10 : 38) * (isDifferentGroup ? 1 : 1.2);
     const unitVector = matter.Vector.normalise({ x: dx, y: dy });
     const forceUnclamped = matter.Vector.mult(
       unitVector,
@@ -111,10 +112,11 @@ for (let cy = 0; cy < image.height; cy += imageGridUnit) {
       xShift = (size * imageGridUnit) / 2 + size;
       yShift = (-size * imageGridUnit) / 2;
     }
-    const color = `#${(Math.random() * 255 ** 3)
-      .toString(16)
-      .padStart(6, "0")
-      .slice(0, 6)}`;
+    const color = `rgb(
+      ${Math.round(128 + Math.random() * 128)},
+      ${Math.round(128 + Math.random() * 128)},
+      ${Math.round(128 + Math.random() * 128)}
+    )`;
     for (let x = 0; x < imageGridUnit; x++) {
       for (let y = 0; y < imageGridUnit; y++) {
         const index = cx + x + (cy + y) * image.width;
@@ -219,15 +221,16 @@ const ground = matter.Bodies.rectangle(
   },
 );
 const limitMaxSpeed = () => {
-  const maxSpeed = 15;
+  const maxSpeed = 10000000;
+  const maxSideSpeed = 10;
   const maxUpSpeed = 5;
   for (const body of engine.world.bodies) {
-    if (body.velocity.x > maxSpeed) {
-      matter.Body.setVelocity(body, { x: maxSpeed, y: body.velocity.y });
+    if (body.velocity.x > maxSideSpeed) {
+      matter.Body.setVelocity(body, { x: maxSideSpeed, y: body.velocity.y });
     }
 
-    if (body.velocity.x < -maxSpeed) {
-      matter.Body.setVelocity(body, { x: -maxSpeed, y: body.velocity.y });
+    if (body.velocity.x < -maxSideSpeed) {
+      matter.Body.setVelocity(body, { x: -maxSideSpeed, y: body.velocity.y });
     }
 
     if (body.velocity.y > maxSpeed) {

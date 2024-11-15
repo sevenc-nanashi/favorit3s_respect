@@ -34,13 +34,14 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
         note.ticks + note.durationTicks > currentTick,
     )
     .toSorted((a, b) => a.midi - b.midi);
+  const isStarted = songsTrack.notes.some((note) => note.ticks <= currentTick);
   const isEnded = songsTrack.notes.every(
     (note) => note.ticks + note.durationTicks < currentTick,
   );
   graphics.textAlign(p.LEFT, p.TOP);
   const songListBaseY = p.height - padding - 24 * 3;
-  if (isEnded) {
-    for (let i = 0; i < 3; i++) {
+  if (!isStarted || isEnded) {
+    for (let i = isEnded ? 1 : 2; i < 3; i++) {
       graphics.text("テキスト見本", padding, songListBaseY + i * 24);
     }
   } else {
@@ -71,7 +72,11 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
             previousTime < timelineMid.header.ticksToSeconds(note.ticks) &&
             timelineMid.header.ticksToSeconds(note.ticks) < state.currentTime,
         );
-        if (previousEndedNote && previousEndedNote.midi > note.midi && !previousStartedNote) {
+        if (
+          previousEndedNote &&
+          previousEndedNote.midi > note.midi &&
+          !previousStartedNote
+        ) {
           moveProgress = Math.min(
             (state.currentTime -
               timelineMid.header.ticksToSeconds(
@@ -107,18 +112,19 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
     }
   }
 
-  beatVisualizer(
-    graphics,
-    state,
-    p.width / 2 + 260 + dotUnit * 4,
-    p.height - padding,
-  );
+  if (!isEnded) {
+    beatVisualizer(
+      graphics,
+      state,
+      p.width / 2 + 260 + dotUnit * 4,
+      p.height - padding,
+    );
 
+    drumVisualizer(graphics, state, p.width - padding, p.height - padding);
+  }
   graphics.fill(255);
   graphics.textAlign(p.RIGHT, p.TOP);
   graphics.text(`FPS: ${p.frameRate().toFixed(2)}`, p.width - padding, padding);
-
-  drumVisualizer(graphics, state, p.width - padding, p.height - padding);
 
   p.image(graphics, 0, 0);
 });

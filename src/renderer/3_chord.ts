@@ -8,6 +8,7 @@ import { easeOutQuint } from "../easing";
 
 const baseMid = 60;
 
+const songsTrack = timelineMid.tracks.find((track) => track.name === "songs")!;
 const chordTrack = timelineMid.tracks.find((track) => track.name === "chords")!;
 
 let chordImage: p5.Image;
@@ -32,6 +33,10 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
     preload(p);
     return;
   }
+  const isEnded = songsTrack.notes.every(
+    (note) => note.ticks + note.durationTicks < state.currentTick,
+  );
+  if (isEnded) return;
   const activeChord = chordTrack.notes.findLast(
     (note) =>
       state.currentTick >= note.ticks &&
