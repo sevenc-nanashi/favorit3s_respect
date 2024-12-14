@@ -2,11 +2,8 @@ import type p5 from "p5";
 import type { State } from "../state";
 import commonVert from "../shaders/common.vert?raw";
 import pixelizeFrag from "../shaders/pixelize.frag?raw";
-import timelineMidRaw from "../assets/timeline.mid?uint8array";
-import { parseMidi } from "midi-file";
 import { dotUnit } from "../const";
-import { timelineMid } from "../midi";
-import type { Note } from "@tonejs/midi/dist/Note";
+import { loadTimelineWithText } from "../midi";
 import { sort } from "pixelsort";
 import { easeInQuint, easeOutQuint } from "../easing";
 
@@ -15,36 +12,7 @@ const pixelsortInMid = 61;
 const pixelsortOutMid = 62;
 const alphaInMid = 63;
 
-const timelineLowMid = parseMidi(timelineMidRaw);
-const backgroundTrack = timelineLowMid.tracks.find((track) =>
-  track.some(
-    (note) => note.type === "trackName" && note.text === "backgrounds",
-  ),
-)!;
-const backgroundTonejsMid = timelineMid.tracks.find(
-  (track) => track.name === "backgrounds",
-)!;
-const backgroundEvents = backgroundTrack.reduce(
-  (acc, note) => {
-    acc.time += note.deltaTime;
-    if (note.type !== "text") {
-      return acc;
-    }
-    const textBytes = note.text.split("").map((char) => char.charCodeAt(0));
-    const text = new TextDecoder()
-      .decode(new Uint8Array(textBytes))
-      .replaceAll("/", "\n");
-    const midiNote = backgroundTonejsMid.notes.find(
-      (note) => note.ticks === acc.time && note.midi === imageSwitchMid,
-    );
-    if (!midiNote) {
-      throw new Error(`No note found for lyrics at ${acc.time}, ${text}`);
-    }
-    acc.lyrics.push({ text, time: acc.time, note: midiNote });
-    return acc;
-  },
-  { lyrics: [] as { text: string; time: number; note: Note }[], time: 0 },
-);
+const backgroundTrack = loadTimelineWithText("backgrounds");
 
 const images = import.meta.glob("../assets/backgrounds/*.png", {
   eager: true,
@@ -86,13 +54,13 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
 
   mainGraphics.clear();
   const currentTick = state.currentTick;
-  const activeBackground = backgroundEvents.lyrics.find(
+  const activeBackground = backgroundTrack.texts.find(
     (note) =>
       note.time <= currentTick &&
       note.time + note.note.durationTicks > currentTick,
   );
 
-  const sortNote = backgroundTonejsMid.notes.find(
+  const sortNote = backgroundTrack.track.notes.find(
     (note) =>
       note.ticks <= currentTick &&
       note.ticks + note.durationTicks > currentTick &&
@@ -145,7 +113,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
     mainGraphics.quad(-1, -1, 1, -1, 1, 1, -1, 1);
   }
 
-  const alphaNote = backgroundTonejsMid.notes.find(
+  const alphaNote = backgroundTrack.track.notes.find(
     (note) =>
       note.ticks <= currentTick &&
       note.ticks + note.durationTicks > currentTick &&

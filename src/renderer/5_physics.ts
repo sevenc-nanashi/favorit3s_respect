@@ -53,6 +53,7 @@ const doDraw = (
   const shiftedY = -Math.sin(angleRad) * x + Math.cos(angleRad) * y;
   p.text(info.char, shiftedX, shiftedY);
 };
+export const groundHeight = padding + 24 * 3 + padding + dotUnit;
 export const draw = import.meta.hmrify((p: p5, state: State) => {
   const gravity = gravityTrack.notes.findLast(
     (note) =>
@@ -78,7 +79,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   p.fill(...fg);
   p.rect(
     padding,
-    p.height - padding - 24 * 3 - padding - dotUnit - groundShift,
+    p.height - groundHeight - groundShift,
     (p.width - padding * 2) * easeOutQuint(initialProgress),
     dotUnit,
   );

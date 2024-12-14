@@ -48,9 +48,10 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
     if (isRecording) {
       state.currentFrame += 1;
     } else {
-      state.currentFrame = Math.floor(audioElement.currentTime * frameRate);
+      state.currentFrame = Math.floor(audioElement.currentTime * frameRate) + 2;
     }
     p.background(...bg);
+    p.noSmooth();
 
     for (const [path, { draw }] of Object.entries(renderers)) {
       using _context = useGraphicContext(p);
