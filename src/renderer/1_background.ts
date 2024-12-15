@@ -11,8 +11,11 @@ const imageSwitchMid = 60;
 const pixelsortInMid = 61;
 const pixelsortOutMid = 62;
 const alphaInMid = 63;
+const higherResolutionMid = 64;
 
-const backgroundTrack = loadTimelineWithText("backgrounds");
+const backgroundTrack = loadTimelineWithText("backgrounds", {
+  midis: [imageSwitchMid],
+});
 
 const images = import.meta.glob("../assets/backgrounds/*.png", {
   eager: true,
@@ -24,7 +27,7 @@ let cpuGraphics: p5.Graphics;
 let mainGraphics: p5.Graphics;
 
 const wave = dotUnit;
-const minusScale = 1 / 8;
+const minusScale = 1 / 4;
 
 export const preload = import.meta.hmrify((p: p5) => {
   for (const [path, image] of Object.entries(images)) {
@@ -56,8 +59,9 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   const currentTick = state.currentTick;
   const activeBackground = backgroundTrack.texts.find(
     (note) =>
-      note.time <= currentTick &&
-      note.time + note.note.durationTicks > currentTick,
+      note.note.ticks <= currentTick &&
+      note.note.ticks + note.note.durationTicks > currentTick &&
+      note.note.midi === imageSwitchMid,
   );
 
   const sortNote = backgroundTrack.track.notes.find(
@@ -107,7 +111,16 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
       "u_wave",
       Math.sin(currentMeasure * Math.PI) * wave * minusScale,
     );
-    pixelizeShader.setUniform("u_pixelSize", dotUnit * 4 * minusScale);
+    const isHigherResolution = backgroundTrack.track.notes.some(
+      (note) =>
+        note.ticks <= currentTick &&
+        currentTick < note.ticks + note.durationTicks &&
+        note.midi === higherResolutionMid,
+    );
+    pixelizeShader.setUniform(
+      "u_pixelSize",
+      dotUnit * (isHigherResolution ? 2 : 4) * minusScale,
+    );
     pixelizeShader.setUniform("u_texture", cpuGraphics);
 
     mainGraphics.quad(-1, -1, 1, -1, 1, 1, -1, 1);

@@ -69,9 +69,15 @@ importers:
       npm-run-all2:
         specifier: ^7.0.1
         version: 7.0.1
+      reaper-project-parser:
+        specifier: link:deps/reaper-project-parser
+        version: link:deps/reaper-project-parser
       sharp:
         specifier: 0.33.5
         version: 0.33.5
+      shlex:
+        specifier: ^2.1.2
+        version: 2.1.2
       tsx:
         specifier: ^4.19.2
         version: 4.19.2
@@ -889,6 +895,9 @@ packages:
   shell-quote@1.8.1:
     resolution: {integrity: sha512-6j1W9l1iAs/4xYBI1SYOVZyFcCis9b4KCLQ8fgAGG07QvzaRLVVRQvAy85yNmmZSjYjg4MWh4gNvlPujU/5LpA==}
 
+  shlex@2.1.2:
+    resolution: {integrity: sha512-Nz6gtibMVgYeMEhUjp2KuwAgqaJA1K155dU/HuDaEJUGgnmYfVtVZah+uerVWdH8UGnyahhDCgABbYTbs254+w==}
+
   simple-swizzle@0.2.2:
     resolution: {integrity: sha512-JA//kQgZtbuY83m+xT+tXJkmJncGMTFT+C+g2h2R9uxkYIrE2yy9sgmcLhCnw57/WSD+Eh3J97FPEDFnbXnDUg==}
 
@@ -1573,6 +1582,8 @@ snapshots:
   shebang-regex@3.0.0: {}
 
   shell-quote@1.8.1: {}
+
+  shlex@2.1.2: {}
 
   simple-swizzle@0.2.2:
     dependencies:

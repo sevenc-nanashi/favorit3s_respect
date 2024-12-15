@@ -3,15 +3,14 @@ import type { State } from "../state";
 import { loadTimelineWithText, timelineMid } from "../midi";
 import { dotUnit } from "../const";
 import texture from "../assets/texture.png";
-import face1 from "../assets/face1.png";
-import face2 from "../assets/face2.png";
 import slicesRaw from "../assets/slices.yml";
 import { groundHeight } from "./5_physics";
 import { useGraphicContext } from "../utils";
 import { characterLabs } from "../lab";
 
-// face1: eyes=close, mouth=open
-// face2: eyes=open, mouth=close
+const faces = import.meta.glob("../assets/faces/*.png", {
+  eager: true,
+}) as Record<string, { default: string }>;
 
 type SliceDefinition = {
   name: string;
@@ -38,12 +37,13 @@ const faceBaseMid = 56;
 const faceMidPerCharacter = 2;
 
 let textureImage: p5.Image;
-let face1Image: p5.Image;
-let face2Image: p5.Image;
+const faceImages: Record<string, p5.Image> = {};
 export const preload = import.meta.hmrify((p: p5) => {
   textureImage = p.loadImage(texture);
-  face1Image = p.loadImage(face1);
-  face2Image = p.loadImage(face2);
+  for (const [path, image] of Object.entries(faces)) {
+    const filename = path.split("/").pop()!;
+    faceImages[filename] = p.loadImage(image.default);
+  }
 });
 
 const imageSpecification =
@@ -103,11 +103,11 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
       -slice.width / 2,
       -slice.height + shiftValue,
       slice.width,
-      slice.moveHeight,
+      slice.moveHeight + 1,
       slice.start[0],
       slice.start[1],
       slice.width,
-      slice.moveHeight,
+      slice.moveHeight + 1,
     );
     if (characters.includes(match.groups!.name)) {
       const index = characters.indexOf(match.groups!.name);
@@ -119,7 +119,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
           note.midi < faceBaseMid + (index + 1) * faceMidPerCharacter,
       );
       const toggleEyes = faceNotes.some((note) => note.midi % 2 === 0);
-      let isMouthOpenByLab = false;
+      let mouthType = "x";
       if (match.groups!.name in characterLabs) {
         const lab =
           characterLabs[match.groups!.name as keyof typeof characterLabs];
@@ -129,13 +129,26 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
             state.currentTime < phoneme.end,
         );
         if (currentPhoneme) {
-          isMouthOpenByLab = "aeo".includes(currentPhoneme.phoneme);
+          switch (currentPhoneme.phoneme) {
+            case "a":
+            case "u":
+            case "o":
+            case "i":
+            case "e":
+              mouthType = currentPhoneme.phoneme;
+              break;
+            default:
+              mouthType = "x";
+              break;
+          }
         }
       }
-      const toggleMouth =
-        faceNotes.some((note) => note.midi % 2 === 1) || isMouthOpenByLab;
+      const toggleMouth = faceNotes.some((note) => note.midi % 2 === 1);
+      if (toggleMouth) {
+        mouthType = "o";
+      }
       p.image(
-        toggleEyes ? face2Image : face1Image,
+        toggleEyes ? faceImages["eyes_close.png"] : faceImages["eyes_open.png"],
         -slice.width / 2,
         -slice.height + (slices.eyeY - slice.start[1]) + shiftValue,
         slice.width,
@@ -146,15 +159,15 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
         slices.mouthY - slices.eyeY,
       );
       p.image(
-        toggleMouth ? face2Image : face1Image,
+        faceImages[`mouth_${mouthType}.png`],
         -slice.width / 2,
         -slice.height + (slices.mouthY - slice.start[1]) + shiftValue,
         slice.width,
-        slices.mouthHeight,
+        slices.mouthHeight + 1,
         slice.start[0],
         slices.mouthY,
         slice.width,
-        slices.mouthHeight,
+        slices.mouthHeight + 1,
       );
     }
   }

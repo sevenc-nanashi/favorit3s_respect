@@ -13,20 +13,29 @@ export const characterLabs = {
   teto: [] as LabEntry[],
   zundamon: [] as LabEntry[],
   tsumugi: [] as LabEntry[],
+  aoi: [] as LabEntry[],
+  akane: [] as LabEntry[],
+  defoko: [] as LabEntry[],
 };
 
 for (const [path, lab] of Object.entries(rawLabs)) {
   const lines = lab.split("\n");
-  const character = path.split("/").pop()!.split(".")[0];
-  const characterName = character.split("_")[0] as keyof typeof characterLabs;
-  for (const line of lines) {
+  const characterBase = path.split("/").pop()!.split(".")[0];
+  const character = characterBase
+    .split("_")
+    .at(-1) as keyof typeof characterLabs;
+  const startAt = 45000000 / 10e7;
+  for (const [i, line] of lines.entries()) {
     const [start, end, phoneme] = line.split(" ");
+    if (i <= 3) {
+      continue;
+    }
     if (phoneme === "pau") {
       continue;
     }
-    characterLabs[characterName].push({
-      start: Number.parseInt(start) / 10e7,
-      end: Number.parseInt(end) / 10e7,
+    characterLabs[character].push({
+      start: Number.parseInt(start) / 10e7 - startAt,
+      end: Number.parseInt(end) / 10e7 - startAt,
       phoneme,
     });
   }

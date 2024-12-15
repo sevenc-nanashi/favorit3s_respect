@@ -33,25 +33,16 @@ const doDraw = (
   yShift: number,
 ) => {
   using _context = useGraphicContext(p);
-  p.rotate(info.angle);
   let centerX = info.center.x - 36 / 2 + xShift;
   let centerY = info.center.y + yShift;
   if (shiftChars.includes(info.char)) {
     centerX -= 36 / 2 + 36 / 6;
     centerY += 36 / 2;
   }
-  const x =
-    info.x - Math.cos(info.angle) * centerX + Math.sin(info.angle) * centerY;
-  const y =
-    info.y -
-    Math.sin(info.angle) * centerX -
-    Math.cos(info.angle) * centerY -
-    groundShift;
+  p.translate(info.x + xShift, info.y + yShift - groundShift);
 
-  const angleRad = info.angle;
-  const shiftedX = Math.cos(angleRad) * x + Math.sin(angleRad) * y;
-  const shiftedY = -Math.sin(angleRad) * x + Math.cos(angleRad) * y;
-  p.text(info.char, shiftedX, shiftedY);
+  p.rotate(info.angle);
+  p.text(info.char, -centerX, -centerY);
 };
 export const groundHeight = padding + 24 * 3 + padding + dotUnit;
 export const draw = import.meta.hmrify((p: p5, state: State) => {

@@ -129,8 +129,8 @@ const verticalText = (
   }
 };
 
-const sidePadding = 24 + 36 * 2;
-const topPadding = 48 + 36 * 2;
+export const sidePadding = 24 + 36 * 2;
+export const topPadding = 48 + 36 * 2;
 let rightGraphics: p5.Graphics;
 let leftGraphics: p5.Graphics;
 

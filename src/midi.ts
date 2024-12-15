@@ -1,12 +1,10 @@
-import { Midi, type Note } from "@tonejs/midi";
-import data from "./assets/main.mid?uint8array";
-import timelineMidRaw from "./assets/timeline.mid?uint8array";
-import { parseMidi } from "midi-file";
+import type { Note } from "@tonejs/midi/dist/Note";
+import midi from "./assets/main.mid?mid";
+import timelineMid, {
+  rawMidi as timelineRawMid,
+} from "./assets/timeline.mid?mid";
 
-export const midi = new Midi(data);
-midi.tracks = midi.tracks.filter((track) => !track.name.startsWith("#"));
-
-export const timelineMid = new Midi(timelineMidRaw);
+export { midi, timelineMid, timelineRawMid };
 
 export const measureToTicks = (measure: number): number => {
   const lastTimeSignature = midi.header.timeSignatures.findLast(
@@ -36,11 +34,17 @@ export const trackMeasures = midi.tracks.map((track) => {
   return measures;
 });
 
-export const loadTimelineWithText = (trackName: string) => {
+export const loadTimelineWithText = (
+  trackName: string,
+  options?: Partial<{
+    midis: number[];
+  }>,
+) => {
+  const midis = options?.midis;
   const tonejsMidiTrack = timelineMid.tracks.find(
     (track) => track.name === trackName,
   )!;
-  const rawTrack = parseMidi(timelineMidRaw).tracks.find((track) =>
+  const rawTrack = timelineRawMid.tracks.find((track) =>
     track.some((note) => note.type === "trackName" && note.text === trackName),
   )!;
 
@@ -55,7 +59,8 @@ export const loadTimelineWithText = (trackName: string) => {
         .decode(new Uint8Array(textBytes))
         .replaceAll("/", "\n");
       const midiNote = tonejsMidiTrack.notes.find(
-        (note) => note.ticks >= acc.time,
+        (note) =>
+          note.ticks + 1 >= acc.time && (!midis || midis.includes(note.midi)),
       );
       if (!midiNote) {
         throw new Error(`No note found at ${acc.time}, ${text}`);
