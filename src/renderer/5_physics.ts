@@ -1,11 +1,11 @@
 import type p5 from "p5";
-import type { State } from "../state";
-import { timelineMid } from "../midi";
-import { dotUnit, fg, mainFont } from "../const";
 import bakedGravityRaw from "../assets/gravity.json";
-import { padding } from "./4_info";
+import { dotUnit, fg, mainFont } from "../const";
 import { easeOutQuint } from "../easing";
+import { timelineMid } from "../midi";
+import type { State } from "../state";
 import { useGraphicContext } from "../utils";
+import { padding } from "./4_info";
 
 type GravityInfo = {
   x: number;
@@ -17,9 +17,7 @@ type GravityInfo = {
 };
 const bakedGravity = bakedGravityRaw as GravityInfo[][];
 
-const gravityTrack = timelineMid.tracks.find(
-  (track) => track.name === "misc",
-)!;
+const gravityTrack = timelineMid.tracks.find((track) => track.name === "misc")!;
 const gravityMidi = 60;
 const shiftMidi = 61;
 

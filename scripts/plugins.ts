@@ -1,6 +1,6 @@
-import parse from "reaper-project-parser";
 import fs from "node:fs/promises";
 import jsYaml from "js-yaml";
+import parse from "reaper-project-parser";
 import { split } from "shlex";
 
 const rpp = await fs.readFile(process.argv[2], "utf-8");

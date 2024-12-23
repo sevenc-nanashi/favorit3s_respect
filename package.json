@@ -11,7 +11,9 @@
     "scripts:slices": "tsx ./scripts/slices.ts",
     "scripts:plugins": "tsx ./scripts/plugins.ts",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "biome check",
+    "lint:fix": "biome check --write"
   },
   "devDependencies": {
     "@rollup/plugin-yaml": "^4.1.2",

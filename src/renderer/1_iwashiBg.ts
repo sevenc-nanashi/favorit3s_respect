@@ -1,9 +1,9 @@
 import type p5 from "p5";
-import type { State } from "../state";
-import commonVert from "../shaders/common.vert?raw";
-import pixelizeFrag from "../shaders/pixelize.frag?raw";
 import { dotUnit } from "../const";
 import { timelineMid } from "../midi";
+import commonVert from "../shaders/common.vert?raw";
+import pixelizeFrag from "../shaders/pixelize.frag?raw";
+import type { State } from "../state";
 
 const shouldShowMid = 72;
 const moveMid = 73;

@@ -1,7 +1,7 @@
 import type p5 from "p5";
+import { dotUnit, smallFont } from "../const";
 import { midi } from "../midi";
 import type { State } from "../state";
-import { dotUnit, smallFont } from "../const";
 
 export const beatVisualizer = import.meta.hmrify(
   (graphics: p5.Graphics, state: State, x: number, y: number) => {

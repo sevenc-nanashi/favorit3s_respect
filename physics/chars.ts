@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
-import { createCanvas, GlobalFonts } from "@napi-rs/canvas";
-import { parseMidi } from "midi-file";
+import { GlobalFonts, createCanvas } from "@napi-rs/canvas";
 import midi from "@tonejs/midi";
+import { parseMidi } from "midi-file";
 const { Midi } = midi;
 
 const assets = `${import.meta.dirname}/../src/assets`;

@@ -1,11 +1,11 @@
 import type p5 from "p5";
-import type { State } from "../state";
-import { timelineMid } from "../midi";
-import { dotUnit, fg, mainFont } from "../const";
-import { beatVisualizer } from "../components/beatVisualizer";
 import songsRaw from "../assets/songs.txt?raw";
+import { beatVisualizer } from "../components/beatVisualizer";
 import { drumVisualizer } from "../components/drumVisualizer";
+import { dotUnit, fg, mainFont } from "../const";
 import { easeOutQuint } from "../easing";
+import { timelineMid } from "../midi";
+import type { State } from "../state";
 
 const songs = songsRaw.split("\n");
 const songsTrack = timelineMid.tracks.find((track) => track.name === "songs")!;

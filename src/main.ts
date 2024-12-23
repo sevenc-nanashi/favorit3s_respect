@@ -1,8 +1,8 @@
 import p5 from "p5";
 import { registerP5Capture } from "p5.capture";
 import "./style.css";
+import { frameRate, height, width } from "./const.ts";
 import { draw, preload } from "./draw.ts";
-import { width, height, frameRate } from "./const.ts";
 import { State } from "./state.ts";
 
 const instance = new p5((p: p5) => {

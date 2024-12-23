@@ -1,10 +1,10 @@
 import type p5 from "p5";
-import type { State } from "../state";
-import { timelineMid } from "../midi";
 import chords from "../assets/chord.png";
-import { padding } from "./4_info";
 import { dotUnit, height } from "../const";
 import { easeOutQuint } from "../easing";
+import { timelineMid } from "../midi";
+import type { State } from "../state";
+import { padding } from "./4_info";
 
 const baseMid = 60;
 

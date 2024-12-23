@@ -1,9 +1,9 @@
 import type p5 from "p5";
-import type { State } from "../state";
-import { fg, mainFont } from "../const";
 import creditsRaw from "../assets/credits.txt?raw";
-import { sidePadding, topPadding } from "./3_lyrics";
+import { fg, mainFont } from "../const";
 import { timelineMid } from "../midi";
+import type { State } from "../state";
+import { sidePadding, topPadding } from "./3_lyrics";
 
 const credits = creditsRaw
   .split("====\n")

@@ -1,8 +1,8 @@
-import type p5 from "p5";
-import type { State } from "../state";
-import { midi } from "../midi";
-import { dotUnit, frameRate } from "../const";
 import type { Track } from "@tonejs/midi";
+import type p5 from "p5";
+import { dotUnit, frameRate } from "../const";
+import { midi } from "../midi";
+import type { State } from "../state";
 
 const morseBrightness = 192;
 const morseTracks: {

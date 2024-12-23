@@ -1,9 +1,9 @@
-import type p5 from "p5";
-import type { State } from "../state";
-import { midi } from "../midi";
-import { dotUnit } from "../const";
 import type { Note } from "@tonejs/midi/dist/Note";
+import type p5 from "p5";
+import { dotUnit } from "../const";
 import { easeOutQuint } from "../easing";
+import { midi } from "../midi";
+import type { State } from "../state";
 
 const track = midi.tracks.find((track) => track.name === "Accent Phrase")!;
 

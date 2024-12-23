@@ -1,6 +1,6 @@
 import type p5 from "p5";
-import type { State } from "../state";
 import { timelineMid } from "../midi";
+import type { State } from "../state";
 
 const flashTrack = timelineMid.tracks.find((track) => track.name === "flash")!;
 const flashMid = 60;

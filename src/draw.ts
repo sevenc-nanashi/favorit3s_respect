@@ -1,8 +1,8 @@
 import type p5 from "p5";
-import type { State } from "./state.ts";
-import { bg, frameRate, songLength } from "./const.ts";
-import audio from "./assets/main.wav?url";
 import { P5Capture } from "p5.capture";
+import audio from "./assets/main.wav?url";
+import { bg, frameRate, songLength } from "./const.ts";
+import type { State } from "./state.ts";
 import { useGraphicContext } from "./utils.ts";
 
 let isRecording = false;

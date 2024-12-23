@@ -1,11 +1,11 @@
 import type p5 from "p5";
-import type { State } from "../state";
+import { sort } from "pixelsort";
+import { dotUnit } from "../const";
+import { easeInQuint, easeOutQuint } from "../easing";
+import { loadTimelineWithText } from "../midi";
 import commonVert from "../shaders/common.vert?raw";
 import pixelizeFrag from "../shaders/pixelize.frag?raw";
-import { dotUnit } from "../const";
-import { loadTimelineWithText } from "../midi";
-import { sort } from "pixelsort";
-import { easeInQuint, easeOutQuint } from "../easing";
+import type { State } from "../state";
 
 const imageSwitchMid = 60;
 const pixelsortInMid = 61;

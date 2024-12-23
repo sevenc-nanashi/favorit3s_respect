@@ -1,8 +1,8 @@
 import type p5 from "p5";
-import type { State } from "../state";
-import { midi } from "../midi";
 import { dotUnit } from "../const";
 import { easeOutQuint } from "../easing";
+import { midi } from "../midi";
+import type { State } from "../state";
 
 const leftTrack = midi.tracks.find((track) => track.name === "OmoteUra Left")!;
 const rightTrack = midi.tracks.find(

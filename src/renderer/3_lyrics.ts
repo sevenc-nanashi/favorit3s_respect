@@ -1,10 +1,10 @@
-import type p5 from "p5";
-import type { State } from "../state";
-import { timelineMid } from "../midi";
-import { fg, mainFont } from "../const";
-import timelineMidRaw from "../assets/timeline.mid?uint8array";
-import { parseMidi } from "midi-file";
 import type { Note } from "@tonejs/midi/dist/Note";
+import { parseMidi } from "midi-file";
+import type p5 from "p5";
+import timelineMidRaw from "../assets/timeline.mid?uint8array";
+import { fg, mainFont } from "../const";
+import { timelineMid } from "../midi";
+import type { State } from "../state";
 import { useGraphicContext } from "../utils";
 
 const timelineLowMid = parseMidi(timelineMidRaw);
@@ -24,16 +24,18 @@ const lyrics = lyricsTrack.reduce(
     const text = new TextDecoder()
       .decode(new Uint8Array(textBytes))
       .replaceAll("/", "\n");
-    const midiNote = lyricsTonejsMid.notes.find(
+    const midiNotes = lyricsTonejsMid.notes.filter(
       (note) => note.ticks === acc.time,
     );
-    if (!midiNote) {
+    if (!midiNotes) {
       throw new Error(`No note found for lyrics at ${acc.time}, ${text}`);
     }
-    acc.lyrics.push({ text, time: acc.time, note: midiNote });
+    for (const part of text.split("|")) {
+      acc.lyrics.push({ text: part, time: acc.time, notes: midiNotes });
+    }
     return acc;
   },
-  { lyrics: [] as { text: string; time: number; note: Note }[], time: 0 },
+  { lyrics: [] as { text: string; time: number; notes: Note[] }[], time: 0 },
 );
 
 const shiftChars = ["、", "。"];
@@ -51,12 +53,12 @@ const groupLeftLyrics = () => {
   for (const lyric of leftLyrics) {
     events.push({
       type: "start",
-      time: lyric.note.ticks,
+      time: lyric.notes[0].ticks,
       lines: lyric.text.split("\n").length,
     });
     events.push({
       type: "end",
-      time: lyric.note.ticks + lyric.note.durationTicks,
+      time: lyric.notes[0].ticks + lyric.notes[0].durationTicks,
       lines: lyric.text.split("\n").length,
     });
   }
@@ -163,9 +165,9 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
     .filter(
       (lyric) =>
         lyric.time <= currentTick &&
-        currentTick < lyric.time + lyric.note.durationTicks,
+        currentTick < lyric.time + lyric.notes[0].durationTicks,
     )
-    .toSorted((a, b) => a.note.midi - b.note.midi);
+    .toSorted((a, b) => a.notes[0].midi - b.notes[0].midi);
 
   const leftLyrics = activeLyrics
     .filter(

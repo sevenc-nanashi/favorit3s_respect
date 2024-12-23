@@ -1,14 +1,35 @@
 import type p5 from "p5";
-import type { State } from "../state";
-import { loadTimelineWithText, timelineMid } from "../midi";
-import { dotUnit } from "../const";
-import texture from "../assets/texture.png";
 import slicesRaw from "../assets/slices.yml";
-import { groundHeight } from "./5_physics";
-import { useGraphicContext } from "../utils";
+import texture from "../assets/texture.png";
+import { dotUnit } from "../const";
 import { characterLabs } from "../lab";
+import { loadTimelineWithText, timelineMid } from "../midi";
+import type { State } from "../state";
+import { useGraphicContext } from "../utils";
+import { groundHeight } from "./5_physics";
 
-const faces = import.meta.glob("../assets/faces/*.png", {
+/*    mouth  | eyes
+ * 0: closed | open
+ * 1: o      | closed
+ * 2: a      | null
+ * 3: u      | null
+ * 4: e      | null
+ * 5: i      | null
+ */
+
+const textureInfos = [
+  { mouth: "i", eyes: null },
+  { mouth: "closed", eyes: "open" },
+  { mouth: "o", eyes: "closed" },
+  { mouth: "a", eyes: null },
+  { mouth: "u", eyes: null },
+  { mouth: "e", eyes: null },
+] as const satisfies {
+  mouth: string;
+  eyes: string | null;
+}[];
+
+const faces = import.meta.glob("../assets/textures/*.png", {
   eager: true,
 }) as Record<string, { default: string }>;
 
@@ -118,8 +139,8 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
           note.midi >= faceBaseMid + index * faceMidPerCharacter &&
           note.midi < faceBaseMid + (index + 1) * faceMidPerCharacter,
       );
-      const toggleEyes = faceNotes.some((note) => note.midi % 2 === 0);
-      let mouthType = "x";
+      const openEyes = !faceNotes.some((note) => note.midi % 2 === 0);
+      let mouthType = "closed";
       if (match.groups!.name in characterLabs) {
         const lab =
           characterLabs[match.groups!.name as keyof typeof characterLabs];
@@ -138,7 +159,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
               mouthType = currentPhoneme.phoneme;
               break;
             default:
-              mouthType = "x";
+              mouthType = "closed";
               break;
           }
         }
@@ -148,7 +169,11 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
         mouthType = "o";
       }
       p.image(
-        toggleEyes ? faceImages["eyes_close.png"] : faceImages["eyes_open.png"],
+        faceImages[
+          `${textureInfos.findIndex(
+            (info) => info.eyes === (openEyes ? "open" : "closed"),
+          )}.png`
+        ],
         -slice.width / 2,
         -slice.height + (slices.eyeY - slice.start[1]) + shiftValue,
         slice.width,
@@ -159,7 +184,9 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
         slices.mouthY - slices.eyeY,
       );
       p.image(
-        faceImages[`mouth_${mouthType}.png`],
+        faceImages[
+          `${textureInfos.findIndex((info) => info.mouth === mouthType)}.png`
+        ],
         -slice.width / 2,
         -slice.height + (slices.mouthY - slice.start[1]) + shiftValue,
         slice.width,

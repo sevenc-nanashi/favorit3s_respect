@@ -1,7 +1,7 @@
+import matterAttractors from "matter-attractors";
 import matter from "matter-js";
 import chars from "./chars.png";
 import charsText from "./chars.txt?raw";
-import matterAttractors from "matter-attractors";
 matter.use(matterAttractors);
 const image = new Image();
 image.src = chars;

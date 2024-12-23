@@ -1,7 +1,7 @@
 import type p5 from "p5";
-import type { State } from "../state";
-import { timelineMid } from "../midi";
 import { dotUnit } from "../const";
+import { timelineMid } from "../midi";
+import type { State } from "../state";
 
 const track = timelineMid.tracks.find((track) => track.name === "misc")!;
 

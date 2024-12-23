@@ -1,6 +1,6 @@
-import { Hono } from "hono";
-import { serve } from "@hono/node-server";
 import fs from "node:fs/promises";
+import { serve } from "@hono/node-server";
+import { Hono } from "hono";
 
 const app = new Hono();
 
@@ -15,7 +15,6 @@ app.post("/save", async (c) => {
     `${import.meta.dirname}/../src/assets/gravity.json`,
   );
   console.log("Saved gravity.json");
-
 
   return c.json({ status: "ok" });
 });

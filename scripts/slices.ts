@@ -1,11 +1,11 @@
-import sharp from "sharp";
 import fs from "node:fs/promises";
 import jsYaml from "js-yaml";
+import sharp from "sharp";
 
 const assets = `${import.meta.dirname}/../src/assets`;
 
 const output = `${import.meta.dirname}/../src/assets/slices.yml`;
-const sliceDefinition = `${assets}/sliceDefinition.png`;
+const sliceDefinition = `${assets}/textures/slice.png`;
 
 const sliceDefinitionImage = sharp(sliceDefinition).raw();
 const sliceDefinitionMetadata = await sliceDefinitionImage.metadata();

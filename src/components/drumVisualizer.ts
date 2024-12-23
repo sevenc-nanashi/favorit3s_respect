@@ -1,10 +1,10 @@
-import type p5 from "p5";
-import { midi } from "../midi";
-import type { State } from "../state";
-import { dotUnit, frameRate } from "../const";
 import type { Track } from "@tonejs/midi";
 import type { Note } from "@tonejs/midi/dist/Note";
+import type p5 from "p5";
+import { dotUnit, frameRate } from "../const";
 import { easeInQuint, easeOutQuint } from "../easing";
+import { midi } from "../midi";
+import type { State } from "../state";
 
 const starTrack = midi.tracks.find((track) => track.name === "Shooting Star")!;
 const mainDrum = midi.tracks.find((track) => track.name === "Drum 1")!;

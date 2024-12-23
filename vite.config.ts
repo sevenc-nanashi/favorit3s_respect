@@ -1,8 +1,8 @@
 import fs from "node:fs/promises";
-import { defineConfig } from "vite";
 import yaml from "@rollup/plugin-yaml";
-import hmrify from "vite-plugin-hmrify";
+import { defineConfig } from "vite";
 import arraybuffer from "vite-plugin-arraybuffer";
+import hmrify from "vite-plugin-hmrify";
 import wasm from "vite-plugin-wasm";
 
 export default defineConfig({
