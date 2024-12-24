@@ -1,5 +1,4 @@
 import type p5 from "p5";
-import texture from "../assets/texture.png";
 import { dotUnit, sliceDefinitions, slices } from "../const";
 import { characterLabs } from "../lab";
 import { loadTimelineWithText, timelineMid } from "../midi";
@@ -17,18 +16,18 @@ import { groundHeight } from "./5_physics";
  */
 
 const textureInfos = [
-  { mouth: "i", eyes: null },
   { mouth: "closed", eyes: "open" },
-  { mouth: "o", eyes: "closed" },
-  { mouth: "a", eyes: null },
-  { mouth: "u", eyes: null },
+  { mouth: "i", eyes: null },
   { mouth: "e", eyes: null },
+  { mouth: "u", eyes: null },
+  { mouth: "a", eyes: null },
+  { mouth: "o", eyes: "closed" },
 ] as const satisfies {
   mouth: string;
   eyes: string | null;
 }[];
 
-const faces = import.meta.glob("../assets/textures/*.png", {
+const textures = import.meta.glob("../assets/textures/*.png", {
   eager: true,
 }) as Record<string, { default: string }>;
 
@@ -38,13 +37,11 @@ const characters = ["aoi", "defoko", "zundamon", "tsumugi", "teto", "akane"];
 const faceBaseMid = 56;
 const faceMidPerCharacter = 2;
 
-let textureImage: p5.Image;
-const faceImages: Record<string, p5.Image> = {};
+const textureImages: Record<string, p5.Image> = {};
 export const preload = import.meta.hmrify((p: p5) => {
-  textureImage = p.loadImage(texture);
-  for (const [path, image] of Object.entries(faces)) {
+  for (const [path, image] of Object.entries(textures)) {
     const filename = path.split("/").pop()!;
-    faceImages[filename] = p.loadImage(image.default);
+    textureImages[filename] = p.loadImage(image.default);
   }
 });
 
@@ -52,7 +49,7 @@ const imageSpecification =
   /(?<place>[-0-9.]+):(?<name>[a-z]+):(?<base>[0-9]+)/g;
 
 export const draw = import.meta.hmrify((p: p5, state: State) => {
-  if (!textureImage) {
+  if (Object.keys(textureImages).length === 0) {
     preload(p);
     return;
   }
@@ -90,7 +87,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
     const shiftValue = base - activeNote.midi;
 
     p.image(
-      textureImage,
+      textureImages["0.png"],
       -slice.width / 2,
       -slice.height + slice.moveHeight,
       slice.width,
@@ -101,7 +98,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
       slice.height - slice.moveHeight,
     );
     p.image(
-      textureImage,
+      textureImages["0.png"],
       -slice.width / 2,
       -slice.height + shiftValue,
       slice.width,
@@ -150,7 +147,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
         mouthType = "o";
       }
       p.image(
-        faceImages[
+        textureImages[
           `${textureInfos.findIndex(
             (info) => info.eyes === (openEyes ? "open" : "closed"),
           )}.png`
@@ -165,7 +162,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
         slices.mouthY - slices.eyeY,
       );
       p.image(
-        faceImages[
+        textureImages[
           `${textureInfos.findIndex((info) => info.mouth === mouthType)}.png`
         ],
         -slice.width / 2,

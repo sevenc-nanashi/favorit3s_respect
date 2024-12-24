@@ -28,7 +28,8 @@ const innerSize = 300;
 const outerSize = 350;
 const rectSize = 100;
 const dashSize = 320;
-const dashWidth = dashSize / 10;
+const dashDiv = 12;
+const dashWidth = (dashSize + dotUnit * 4) / dashDiv;
 const innerFrameMidi = 72;
 const innerFrameOutMidi = 73;
 const outerFrameMidi = 74;
@@ -162,60 +163,6 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
     );
   }
 
-  const starNote = starTrack.notes.findLast(
-    (note) => state.currentTick >= note.ticks && note.midi === starMidi,
-  );
-  if (starNote) {
-    const opacity = p.map(
-      state.currentTime,
-      starNote.time,
-      starNote.time + 6,
-      255,
-      0,
-      true,
-    );
-    if (opacity > 0) {
-      using _context = useGraphicContext(p);
-      dashFrameGraphics.clear();
-      dashFrameGraphics.noErase();
-      dashFrameGraphics.fill(255);
-      dashFrameGraphics.noStroke();
-      drawFrame(
-        dashFrameGraphics,
-        1,
-        outerSize / 2,
-        outerSize / 2 - dashSize / 2,
-        dashSize,
-        dotUnit * 2,
-      );
-      let toggle = Math.floor(state.currentFrame / 2) % 2;
-      dashFrameGraphics.erase();
-      for (
-        let x = outerSize / 2 - dashSize / 2 - dotUnit * 2;
-        x <= outerSize / 2 + dashSize / 2 + dotUnit * 2;
-        x += dashWidth
-      ) {
-        for (
-          let y = outerSize / 2 - dashSize / 2 - dotUnit * 2;
-          y <= outerSize / 2 + dashSize / 2 + dotUnit * 2;
-          y += dashWidth
-        ) {
-          toggle = 1 - toggle;
-          if (toggle) {
-            continue;
-          }
-          dashFrameGraphics.rect(x, y, dashWidth, dashWidth);
-        }
-      }
-      p.tint(255, opacity);
-      p.image(
-        dashFrameGraphics,
-        p.width / 2 - outerSize / 2,
-        p.height / 2 - outerSize / 2,
-      );
-    }
-  }
-
   const outerFramePersist = track.notes.findLast(
     (note) =>
       state.currentTick >= note.ticks &&
@@ -231,6 +178,60 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
       outerSize,
       dotUnit * 2,
     );
+    const starNote = starTrack.notes.findLast(
+      (note) => state.currentTick >= note.ticks && note.midi === starMidi,
+    );
+    if (starNote) {
+      const opacity = p.map(
+        state.currentTime,
+        starNote.time,
+        starNote.time + 6,
+        255,
+        0,
+        true,
+      );
+      if (opacity > 0) {
+        using _context = useGraphicContext(p);
+        dashFrameGraphics.clear();
+        dashFrameGraphics.noErase();
+        dashFrameGraphics.fill(255);
+        dashFrameGraphics.noStroke();
+        drawFrame(
+          dashFrameGraphics,
+          1,
+          outerSize / 2,
+          outerSize / 2 - dashSize / 2,
+          dashSize,
+          dotUnit * 2,
+        );
+        const toggle = Math.floor(state.currentFrame / 2) % 2;
+        dashFrameGraphics.erase();
+        for (
+          //let x = outerSize / 2 - dashSize / 2 - dotUnit * 2;
+          //x <= outerSize / 2 + dashSize / 2 + dotUnit * 2;
+          //x += dashWidth
+          let nx = 0;
+          nx < dashDiv;
+          nx++
+        ) {
+          const x = outerSize / 2 - dashSize / 2 - dotUnit * 2 + nx * dashWidth;
+          for (let ny = 0; ny < dashDiv; ny++) {
+            const y =
+              outerSize / 2 - dashSize / 2 - dotUnit * 2 + ny * dashWidth;
+            if ((nx + ny) % 2 === toggle) {
+              continue;
+            }
+            dashFrameGraphics.rect(x, y, dashWidth, dashWidth);
+          }
+        }
+        p.tint(255, opacity);
+        p.image(
+          dashFrameGraphics,
+          p.width / 2 - outerSize / 2,
+          p.height / 2 - outerSize / 2,
+        );
+      }
+    }
   }
 
   const arpNotes = track.notes.filter(
@@ -240,7 +241,10 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
       note.midi >= arpMidi &&
       note.midi < arpMidi + 12,
   );
-  for (const arpNote of arpNotes) {
+  for (const [i, arpNote] of arpNotes.entries()) {
+    if (arpNotes.findLastIndex((note) => note.midi === arpNote.midi) !== i) {
+      continue;
+    }
     const progress = p.map(
       state.currentTime,
       arpNote.time + arpNote.duration,

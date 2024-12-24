@@ -5,7 +5,7 @@ import { easeOutQuint } from "../easing";
 import { timelineMid } from "../midi";
 import type { State } from "../state";
 import { useGraphicContext } from "../utils";
-import { padding } from "./4_info";
+import { padding } from "./8_info";
 
 type GravityInfo = {
   x: number;
@@ -24,9 +24,8 @@ const shiftMidi = 61;
 const shiftChars = ["、", "。"];
 
 const doDraw = (
-  p: p5,
+  p: p5.Graphics,
   info: GravityInfo,
-  groundShift: number,
   xShift: number,
   yShift: number,
 ) => {
@@ -37,13 +36,19 @@ const doDraw = (
     centerX -= 36 / 2 + 36 / 6;
     centerY += 36 / 2;
   }
-  p.translate(info.x + xShift, info.y + yShift - groundShift);
+  p.translate(info.x + xShift, info.y + yShift);
 
   p.rotate(info.angle);
   p.text(info.char, -centerX, -centerY);
 };
+
+let charsGraphics: p5.Graphics;
+
 export const groundHeight = padding + 24 * 3 + padding + dotUnit;
 export const draw = import.meta.hmrify((p: p5, state: State) => {
+  if (!charsGraphics) {
+    charsGraphics = p.createGraphics(p.width, p.height);
+  }
   const gravity = gravityTrack.notes.findLast(
     (note) =>
       state.currentTick >= note.ticks &&
@@ -76,10 +81,12 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
     const elapsed = state.currentTime - gravity.time;
     const gravityInfo = bakedGravity[Math.floor(elapsed * 60)];
     if (!gravityInfo) return;
-
-    p.textFont(mainFont);
-    p.textSize(36);
-    p.textAlign(p.CENTER, p.TOP);
+    using _context = useGraphicContext(charsGraphics);
+    charsGraphics.textFont(mainFont);
+    charsGraphics.textSize(36);
+    charsGraphics.textAlign(p.CENTER, p.TOP);
+    charsGraphics.clear();
+    charsGraphics.noStroke();
     // for (const info of gravityInfo) {
     //   if (info.y < groundShift) continue;
     //   if (info.y > p.height + groundShift) continue;
@@ -94,12 +101,23 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
     //     }
     //   }
     // }
+    charsGraphics.noErase();
+    charsGraphics.translate(0, -groundShift);
     for (const info of gravityInfo) {
       if (info.y < groundShift) continue;
       if (info.y > p.height + groundShift) continue;
-      p.fill(...fg);
-      doDraw(p, info, groundShift, 0, 0);
+      charsGraphics.fill(...fg);
+      doDraw(charsGraphics, info, 0, 0);
     }
+    charsGraphics.erase();
+    charsGraphics.rect(
+      padding,
+      p.height - groundHeight,
+      p.width - padding * 2,
+      groundHeight,
+    );
+
+    p.image(charsGraphics, 0, 0);
   }
 });
 

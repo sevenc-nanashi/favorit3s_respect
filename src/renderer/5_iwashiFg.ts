@@ -23,8 +23,8 @@ export const preload = import.meta.hmrify((p: p5) => {
   }
 });
 
-const baseY = 182;
-const fenceWidth = 80;
+const floorBaseY = 238;
+const floorWidth = 64;
 
 export const draw = import.meta.hmrify((p: p5, state: State) => {
   if (Object.keys(loadedImages).length === 0) {
@@ -51,6 +51,6 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   p.scale(dotUnit);
   const shift = move ? (state.currentMeasure * 3) % 1 : 0;
   for (let i = -1; i < 8; i++) {
-    p.image(loadedImages["fence.png"], (i - shift) * fenceWidth, baseY);
+    p.image(loadedImages["floor.png"], (i + shift) * floorWidth, floorBaseY);
   }
 });

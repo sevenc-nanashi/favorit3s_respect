@@ -3,7 +3,7 @@ import creditsRaw from "../assets/credits.txt?raw";
 import { fg, mainFont } from "../const";
 import { timelineMid } from "../midi";
 import type { State } from "../state";
-import { sidePadding, topPadding } from "./3_lyrics";
+import { sidePadding, topPadding } from "./7_lyrics";
 
 const credits = creditsRaw
   .split("====\n")
