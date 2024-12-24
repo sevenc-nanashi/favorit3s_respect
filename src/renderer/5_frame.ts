@@ -1,178 +1,63 @@
 import type p5 from "p5";
-import { dotUnit } from "../const";
-import { timelineMid } from "../midi";
+import { dotUnit, sliceDefinitions } from "../const";
+import { midi, timelineMid } from "../midi";
 import type { State } from "../state";
+import { useGraphicContext } from "../utils";
+import { drawFrame } from "../components/frame";
+import { easeInQuint, easeOutQuint } from "../easing";
 
-const track = timelineMid.tracks.find((track) => track.name === "misc")!;
+const track = timelineMid.tracks.find((track) => track.name === "frame")!;
+const starTrack = midi.tracks.find((track) => track.name === "Shooting Star")!;
+const mainDrum = midi.tracks.find((track) => track.name === "Drum 1")!;
+const kickMidi = 36;
+const starMidi = 48;
 
-const drawFrame = (
-  p: p5,
-  progress: number,
-  x: number,
-  y: number,
-  size: number,
-  weight: number,
-) => {
-  p.beginShape();
-  const vertices: [number, number][] = [];
-  const backVertices: [number, number][] = [];
-  const absProgress = Math.abs(progress);
-  (() => {
-    if (progress > 0) {
-      vertices.push([x, y]);
-      backVertices.push([x, y - weight]);
-      if (absProgress <= 1 / 8) {
-        vertices.push([x + p.lerp(0, size / 2, absProgress / (1 / 8)), y]);
-        backVertices.push([
-          x + p.lerp(0, size / 2 + weight, absProgress / (1 / 8)),
-          y - weight,
-        ]);
-        return;
-      }
-      vertices.push([x + size / 2, y]);
-      backVertices.push([x + size / 2 + weight, y - weight]);
-      if (absProgress <= 3 / 8) {
-        vertices.push([
-          x + size / 2,
-          y + p.lerp(0, size, (absProgress - 1 / 8) / (2 / 8)),
-        ]);
-        backVertices.push([
-          x + size / 2 + weight,
-          y +
-            p.lerp(-weight, size + weight * 2, (absProgress - 1 / 8) / (2 / 8)),
-        ]);
-        return;
-      }
+const textures = import.meta.glob("../assets/textures/*.png", {
+  eager: true,
+}) as Record<string, { default: string }>;
+const textureImages: Record<string, p5.Image> = {};
 
-      vertices.push([x + size / 2, y + size]);
-      backVertices.push([x + size / 2 + weight, y + size + weight]);
-
-      if (absProgress <= 5 / 8) {
-        vertices.push([
-          x + p.lerp(size / 2, -size / 2, (absProgress - 3 / 8) / (2 / 8)),
-          y + size,
-        ]);
-        backVertices.push([
-          x +
-            p.lerp(
-              size / 2 + weight,
-              -size / 2 - weight,
-              (absProgress - 3 / 8) / (2 / 8),
-            ),
-          y + size + weight,
-        ]);
-        return;
-      }
-      vertices.push([x - size / 2, y + size]);
-      backVertices.push([x - size / 2 - weight, y + size + weight]);
-
-      if (absProgress <= 7 / 8) {
-        vertices.push([
-          x - size / 2,
-          y + p.lerp(size, 0, (absProgress - 5 / 8) / (2 / 8)),
-        ]);
-        backVertices.push([
-          x - size / 2 - weight,
-          y + p.lerp(size + weight, -weight, (absProgress - 5 / 8) / (2 / 8)),
-        ]);
-        return;
-      }
-
-      vertices.push([x - size / 2, y]);
-      backVertices.push([x - size / 2 - weight, y - weight]);
-
-      vertices.push([
-        x + p.lerp(-size / 2, 0, (absProgress - 7 / 8) / (1 / 8)),
-        y,
-      ]);
-      backVertices.push([
-        x + p.lerp(-size / 2 - weight, 0, (absProgress - 7 / 8) / (1 / 8)),
-        y - weight,
-      ]);
-    } else {
-      vertices.push([x, y]);
-      backVertices.push([x, y - weight]);
-      if (absProgress >= 7 / 8) {
-        vertices.push([
-          x - p.lerp(size / 2, 0, (absProgress - 7 / 8) / (1 / 8)),
-          y,
-        ]);
-        backVertices.push([
-          x - p.lerp(size / 2 + weight, 0, (absProgress - 7 / 8) / (1 / 8)),
-          y - weight,
-        ]);
-        return;
-      }
-      vertices.push([x - size / 2, y]);
-      backVertices.push([x - size / 2 - weight, y - weight]);
-      if (absProgress >= 5 / 8) {
-        vertices.push([
-          x - size / 2,
-          y + p.lerp(size, 0, (absProgress - 5 / 8) / (2 / 8)),
-        ]);
-        backVertices.push([
-          x - size / 2 - weight,
-          y + p.lerp(size + weight, -weight, (absProgress - 5 / 8) / (2 / 8)),
-        ]);
-        return;
-      }
-      vertices.push([x - size / 2, y + size]);
-      backVertices.push([x - size / 2 - weight, y + size + weight]);
-      if (absProgress >= 3 / 8) {
-        vertices.push([
-          x + p.lerp(size / 2, -size / 2, (absProgress - 3 / 8) / (2 / 8)),
-          y + size,
-        ]);
-        backVertices.push([
-          x +
-            p.lerp(
-              size / 2 + weight,
-              -size / 2 - weight,
-              (absProgress - 3 / 8) / (2 / 8),
-            ),
-          y + size + weight,
-        ]);
-        return;
-      }
-      vertices.push([x + size / 2, y + size]);
-      backVertices.push([x + size / 2 + weight, y + size + weight]);
-      if (absProgress >= 1 / 8) {
-        vertices.push([
-          x + size / 2,
-          y + p.lerp(0, size, (absProgress - 1 / 8) / (2 / 8)),
-        ]);
-        backVertices.push([
-          x + size / 2 + weight,
-          y + p.lerp(-weight, size + weight, (absProgress - 1 / 8) / (2 / 8)),
-        ]);
-        return;
-      }
-      vertices.push([x + size / 2, y]);
-      backVertices.push([x + size / 2 + weight, y - weight]);
-      vertices.push([x + p.lerp(0, size / 2, absProgress / (1 / 8)), y]);
-      backVertices.push([
-        x + p.lerp(0, size / 2 + weight, absProgress / (1 / 8)),
-        y - weight,
-      ]);
-    }
-  })();
-  for (const [vx, vy] of vertices) {
-    p.vertex(vx, vy);
+export const preload = import.meta.hmrify((p: p5) => {
+  for (const [path, image] of Object.entries(textures)) {
+    const filename = path.split("/").pop()!;
+    textureImages[filename] = p.loadImage(image.default);
   }
-  for (const [vx, vy] of backVertices.toReversed()) {
-    p.vertex(vx, vy);
-  }
-
-  p.endShape(p.CLOSE);
-};
+});
 
 const innerSize = 300;
-const outerSize = 400;
+const outerSize = 350;
+const rectSize = 100;
+const dashSize = 320;
+const dashWidth = dashSize / 10;
 const innerFrameMidi = 72;
 const innerFrameOutMidi = 73;
 const outerFrameMidi = 74;
 const outerFramePersistMidi = 75;
+
+const yShiftbaseMidi = 60;
+const imageSpecifyMidi = 48;
+const headImageSpecifyMidi = 36;
+
+const arpHeight = 320;
+const arpMidi = 84;
+const arpPersist = 0.15;
+const arpPadding = dotUnit * 2;
+const arpSize = (arpHeight + arpPadding) / 5 - arpPadding;
+let dashFrameGraphics: p5.Graphics;
+
+const bassMidi = 96;
+const bassPadding = dotUnit * 2;
+const bassHeight = 32;
+
 export const draw = import.meta.hmrify((p: p5, state: State) => {
+  if (!dashFrameGraphics) {
+    dashFrameGraphics = p.createGraphics(outerSize, outerSize);
+  }
+  if (Object.keys(textureImages).length === 0) {
+    preload(p);
+    return;
+  }
+
   p.noStroke();
   p.fill(255);
 
@@ -250,6 +135,87 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
       dotUnit * 2,
     );
   }
+
+  if (innerFrame || innerFrameOut || outerFrame) {
+    using _context = useGraphicContext(p);
+    const lastKick = mainDrum.notes.findLast(
+      (note) => note.ticks <= state.currentTick && note.midi === kickMidi,
+    );
+    let additionalSize = 0;
+    if (lastKick) {
+      additionalSize = p.map(
+        state.currentTime,
+        lastKick.time,
+        lastKick.time + 0.2,
+        dotUnit * 2,
+        0,
+        true,
+      );
+    }
+    const computedRectSize = rectSize + additionalSize;
+    p.fill(255);
+    p.rect(
+      p.width / 2 - computedRectSize / 2,
+      p.height / 2 - computedRectSize / 2,
+      computedRectSize,
+      computedRectSize,
+    );
+  }
+
+  const starNote = starTrack.notes.findLast(
+    (note) => state.currentTick >= note.ticks && note.midi === starMidi,
+  );
+  if (starNote) {
+    const opacity = p.map(
+      state.currentTime,
+      starNote.time,
+      starNote.time + 6,
+      255,
+      0,
+      true,
+    );
+    if (opacity > 0) {
+      using _context = useGraphicContext(p);
+      dashFrameGraphics.clear();
+      dashFrameGraphics.noErase();
+      dashFrameGraphics.fill(255);
+      dashFrameGraphics.noStroke();
+      drawFrame(
+        dashFrameGraphics,
+        1,
+        outerSize / 2,
+        outerSize / 2 - dashSize / 2,
+        dashSize,
+        dotUnit * 2,
+      );
+      let toggle = Math.floor(state.currentFrame / 2) % 2;
+      dashFrameGraphics.erase();
+      for (
+        let x = outerSize / 2 - dashSize / 2 - dotUnit * 2;
+        x <= outerSize / 2 + dashSize / 2 + dotUnit * 2;
+        x += dashWidth
+      ) {
+        for (
+          let y = outerSize / 2 - dashSize / 2 - dotUnit * 2;
+          y <= outerSize / 2 + dashSize / 2 + dotUnit * 2;
+          y += dashWidth
+        ) {
+          toggle = 1 - toggle;
+          if (toggle) {
+            continue;
+          }
+          dashFrameGraphics.rect(x, y, dashWidth, dashWidth);
+        }
+      }
+      p.tint(255, opacity);
+      p.image(
+        dashFrameGraphics,
+        p.width / 2 - outerSize / 2,
+        p.height / 2 - outerSize / 2,
+      );
+    }
+  }
+
   const outerFramePersist = track.notes.findLast(
     (note) =>
       state.currentTick >= note.ticks &&
@@ -264,6 +230,129 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
       p.height / 2 - outerSize / 2,
       outerSize,
       dotUnit * 2,
+    );
+  }
+
+  const arpNotes = track.notes.filter(
+    (note) =>
+      state.currentTime >= note.time &&
+      state.currentTime < note.time + note.duration + arpPersist &&
+      note.midi >= arpMidi &&
+      note.midi < arpMidi + 12,
+  );
+  for (const arpNote of arpNotes) {
+    const progress = p.map(
+      state.currentTime,
+      arpNote.time + arpNote.duration,
+      arpNote.time + arpNote.duration + arpPersist,
+      0,
+      1,
+      true,
+    );
+    const x = p.width / 2 + outerSize / 2 + dotUnit * 6;
+    const y =
+      p.height / 2 +
+      arpHeight / 2 -
+      (arpSize + arpPadding) * (arpNote.midi - arpMidi + 1) +
+      arpPadding;
+
+    const opacity = (1 - easeOutQuint(progress)) * 255;
+    p.fill(255, opacity);
+    drawFrame(p, 1, x + arpSize / 2, y, arpSize, -dotUnit * 2);
+  }
+
+  const bassNote = track.notes.findLast(
+    (note) =>
+      state.currentTick >= note.ticks &&
+      state.currentTick < note.ticks + note.durationTicks &&
+      note.midi === bassMidi,
+  );
+  if (bassNote) {
+    const progress = p.map(
+      state.currentTick,
+      bassNote.ticks,
+      bassNote.ticks + bassNote.durationTicks,
+      0,
+      1,
+      true,
+    );
+    const opacity = progress * 255;
+    p.fill(255, opacity);
+    p.rect(
+      p.width / 2 - outerSize / 2 - dotUnit * 2,
+      p.height / 2 + outerSize / 2 + dotUnit * 2 + bassPadding,
+      outerSize + dotUnit * 4,
+      bassHeight,
+    );
+    const interval = Math.floor(state.currentFrame / 4) % 3;
+    for (let i = 0; i < 5; i++) {
+      if (i % 3 !== interval) {
+        continue;
+      }
+      p.fill(255, opacity * (1 - easeInQuint(i / 5)));
+      p.rect(
+        p.width / 2 - outerSize / 2 - dotUnit * 2,
+        p.height / 2 +
+          outerSize / 2 +
+          dotUnit * 2 +
+          bassPadding +
+          bassHeight +
+          dotUnit +
+          dotUnit * 2 * i,
+        outerSize + dotUnit * 4,
+        dotUnit * 2,
+      );
+    }
+  }
+
+  const yShift = track.notes.findLast(
+    (note) =>
+      state.currentTick >= note.ticks &&
+      state.currentTick < note.ticks + note.durationTicks &&
+      yShiftbaseMidi <= note.midi &&
+      note.midi < yShiftbaseMidi + 12,
+  );
+  const imageIndex = track.notes.findLast(
+    (note) =>
+      state.currentTick >= note.ticks &&
+      state.currentTick < note.ticks + note.durationTicks &&
+      note.midi >= imageSpecifyMidi &&
+      note.midi < imageSpecifyMidi + 12,
+  );
+  const headImageIndex = track.notes.findLast(
+    (note) =>
+      state.currentTick >= note.ticks &&
+      state.currentTick < note.ticks + note.durationTicks &&
+      note.midi >= headImageSpecifyMidi &&
+      note.midi < headImageSpecifyMidi + 12,
+  );
+  if (yShift && imageIndex && headImageIndex) {
+    using _context = useGraphicContext(p);
+    p.translate(p.width / 2, p.height / 2 + dashSize / 2 - dotUnit * 2);
+    p.scale(dotUnit);
+    p.image(
+      textureImages[`${headImageIndex.midi - headImageSpecifyMidi}.png`],
+      -sliceDefinitions.kurage.width / 2,
+      -sliceDefinitions.kurage.height - (yShift.midi - yShiftbaseMidi),
+      sliceDefinitions.kurage.width,
+      sliceDefinitions.kurage.moveHeight,
+      sliceDefinitions.kurage.start[0],
+      sliceDefinitions.kurage.start[1],
+      sliceDefinitions.kurage.width,
+      sliceDefinitions.kurage.moveHeight,
+    );
+    p.image(
+      textureImages[`${imageIndex.midi - imageSpecifyMidi}.png`],
+      -sliceDefinitions.kurage.width / 2,
+      -sliceDefinitions.kurage.height -
+        (yShift.midi - yShiftbaseMidi) +
+        sliceDefinitions.kurage.moveHeight,
+      sliceDefinitions.kurage.width,
+      sliceDefinitions.kurage.height - sliceDefinitions.kurage.moveHeight,
+      sliceDefinitions.kurage.start[0],
+      sliceDefinitions.kurage.start[1] + sliceDefinitions.kurage.moveHeight,
+      sliceDefinitions.kurage.width,
+      sliceDefinitions.kurage.height - sliceDefinitions.kurage.moveHeight,
     );
   }
 });

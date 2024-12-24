@@ -1,7 +1,6 @@
 import type p5 from "p5";
-import slicesRaw from "../assets/slices.yml";
 import texture from "../assets/texture.png";
-import { dotUnit } from "../const";
+import { dotUnit, sliceDefinitions, slices } from "../const";
 import { characterLabs } from "../lab";
 import { loadTimelineWithText, timelineMid } from "../midi";
 import type { State } from "../state";
@@ -32,24 +31,6 @@ const textureInfos = [
 const faces = import.meta.glob("../assets/textures/*.png", {
   eager: true,
 }) as Record<string, { default: string }>;
-
-type SliceDefinition = {
-  name: string;
-  start: [number, number];
-  width: number;
-  moveHeight: number;
-  height: number;
-  end: [number, number];
-};
-const slices = slicesRaw as {
-  slices: SliceDefinition[];
-  eyeY: number;
-  mouthY: number;
-  mouthHeight: number;
-};
-const sliceDefinitions = Object.fromEntries(
-  slices.slices.map((slice: SliceDefinition) => [slice.name, slice]),
-) as Record<string, SliceDefinition>;
 
 const track = loadTimelineWithText("item");
 const faceTrack = timelineMid.tracks.find((track) => track.name === "face")!;

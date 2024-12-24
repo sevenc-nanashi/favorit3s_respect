@@ -1,7 +1,7 @@
 import type p5 from "p5";
 import { P5Capture } from "p5.capture";
 import audio from "./assets/main.wav?url";
-import { bg, frameRate, songLength } from "./const.ts";
+import { bg, frameRate, mainFont, songLength } from "./const.ts";
 import type { State } from "./state.ts";
 import { useGraphicContext } from "./utils.ts";
 
@@ -62,9 +62,10 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   } catch (e) {
     p.push();
     p.background([255, 0, 0, 250]);
-    p.textSize(64);
+    p.textSize(24);
     p.textAlign(p.LEFT, p.TOP);
     p.fill([255, 255, 255]);
+    p.textFont(mainFont);
     p.text(String(e), 32, 32);
     p.pop();
     if (!lastFrameErrored) {

@@ -1,4 +1,5 @@
 import { midi } from "./midi";
+import slicesRaw from "./assets/slices.yml";
 
 export const width = 1920;
 export const height = 1080;
@@ -21,3 +22,21 @@ export const songLength = midi.header.ticksToSeconds(
     ),
   ),
 );
+
+export type SliceDefinition = {
+  name: string;
+  start: [number, number];
+  width: number;
+  moveHeight: number;
+  height: number;
+  end: [number, number];
+};
+export const slices = slicesRaw as {
+  slices: SliceDefinition[];
+  eyeY: number;
+  mouthY: number;
+  mouthHeight: number;
+};
+export const sliceDefinitions = Object.fromEntries(
+  slices.slices.map((slice: SliceDefinition) => [slice.name, slice]),
+) as Record<string, SliceDefinition>;

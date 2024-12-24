@@ -24,18 +24,14 @@ for (const [path, lab] of Object.entries(rawLabs)) {
   const character = characterBase
     .split("_")
     .at(-1) as keyof typeof characterLabs;
-  const startAt = 45000000 / 10e7;
-  for (const [i, line] of lines.entries()) {
+  for (const line of lines) {
     const [start, end, phoneme] = line.split(" ");
-    if (i <= 3) {
-      continue;
-    }
     if (phoneme === "pau") {
       continue;
     }
     characterLabs[character].push({
-      start: Number.parseInt(start) / 10e7 - startAt,
-      end: Number.parseInt(end) / 10e7 - startAt,
+      start: Number.parseInt(start) / 10e7,
+      end: Number.parseInt(end) / 10e7,
       phoneme,
     });
   }
