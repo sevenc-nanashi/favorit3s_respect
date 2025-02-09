@@ -1,11 +1,9 @@
 import type p5 from "p5";
-import { P5Capture } from "p5.capture";
 import audio from "./assets/main.wav?url";
 import { bg, frameRate, mainFont, songLength } from "./const.ts";
+import { startCapturer, state as captureState } from "p5-frame-capturer";
 import type { State } from "./state.ts";
 import { useGraphicContext } from "./utils.ts";
-
-let isRecording = false;
 
 const renderers = import.meta.glob("./renderer/*.ts", {
   eager: true,
@@ -15,6 +13,7 @@ const renderers = import.meta.glob("./renderer/*.ts", {
 >;
 const audioElement = new Audio(audio);
 audioElement.autoplay = false;
+audioElement.volume = 0.5;
 
 let registeredCallback: ((e: KeyboardEvent) => void) | null = null;
 let prevMain: p5.Graphics;
@@ -32,7 +31,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   if (!audioElement.paused && !state.playing) {
     audioElement.pause();
   }
-  if (audioElement.paused && state.playing && !isRecording) {
+  if (audioElement.paused && state.playing && !captureState.isCapturing) {
     audioElement.play();
     audioElement.currentTime = state.currentFrame / frameRate;
   }
@@ -45,8 +44,8 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
       );
     }
 
-    if (isRecording) {
-      state.currentFrame += 1;
+    if (captureState.isCapturing) {
+      state.currentFrame = captureState.frameCount;
     } else {
       state.currentFrame = Math.floor(audioElement.currentTime * frameRate) + 2;
     }
@@ -80,17 +79,12 @@ const keydown = (p: p5, state: State) => (e: KeyboardEvent) => {
     state.playing = !state.playing;
   }
   if (e.key === "s") {
-    if (state.currentFrame !== 0) {
+    if (state.currentFrame !== 2) {
       location.reload();
       return;
     }
-    isRecording = true;
-    state.playing = true;
-    P5Capture.getInstance()?.start({
-      duration: (songLength + 5) * frameRate,
-      format: "png",
-      framerate: frameRate,
-    });
+
+    startCapturer(p);
   }
   if (e.key === "r") {
     state.currentFrame = 0;
@@ -111,7 +105,7 @@ const keydown = (p: p5, state: State) => (e: KeyboardEvent) => {
 };
 
 if (import.meta.hot) {
-  import.meta.hot.accept(() => {
+  import.meta.hot.dispose(() => {
     if (registeredCallback)
       window.removeEventListener("keydown", registeredCallback);
 

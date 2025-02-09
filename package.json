@@ -1,5 +1,5 @@
 {
-  "name": "-20240815-movie-test",
+  "name": "favorit3s_respect",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -8,6 +8,7 @@
     "dev:physics": "run-p dev:physics:vite dev:physics:save",
     "dev:physics:vite": "vite ./physics",
     "dev:physics:save": "tsx ./physics/saveServer.ts",
+    "scripts:frames": "tsx ./scripts/frames.ts",
     "scripts:slices": "tsx ./scripts/slices.ts",
     "scripts:plugins": "tsx ./scripts/plugins.ts",
     "build": "tsc && vite build",
@@ -16,13 +17,18 @@
     "lint:fix": "biome check --write"
   },
   "devDependencies": {
+    "@napi-rs/canvas": "^0.1.67",
     "@rollup/plugin-yaml": "^4.1.2",
     "@types/js-yaml": "^4.0.9",
     "@types/matter-js": "^0.19.7",
     "@types/node": "^22.9.0",
     "@types/p5": "^1.7.6",
+    "@types/psd": "^3.4.3",
+    "ag-psd": "^23.1.1",
+    "canvas": "npm:@napi-rs/canvas@^0.1.67",
     "js-yaml": "^4.1.0",
     "npm-run-all2": "^7.0.1",
+    "psd": "^3.4.0",
     "reaper-project-parser": "link:deps/reaper-project-parser",
     "sharp": "0.33.5",
     "shlex": "^2.1.2",
@@ -36,7 +42,6 @@
   "dependencies": {
     "@biomejs/biome": "^1.9.4",
     "@hono/node-server": "^1.13.5",
-    "@napi-rs/canvas": "^0.1.60",
     "@sevenc-nanashi/binaryseeker": "npm:@jsr/sevenc-nanashi__binaryseeker@^1.2.1",
     "@tonejs/midi": "^2.0.28",
     "fft.js": "^4.0.4",
@@ -45,7 +50,7 @@
     "matter-js": "0.20.0",
     "midi-file": "1.2.4",
     "p5": "^1.11.0",
-    "p5.capture": "link:deps/p5.capture",
+    "p5-frame-capturer": "link:/home/sevenc7c/p5-frame-capturer/",
     "pixelsort": "link:pixelsort/pkg"
   }
 }

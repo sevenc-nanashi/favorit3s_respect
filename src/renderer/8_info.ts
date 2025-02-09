@@ -124,7 +124,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
   }
   graphics.fill(255);
   graphics.textAlign(p.RIGHT, p.TOP);
-  graphics.text(`FPS: ${p.frameRate().toFixed(2)}`, p.width - padding, padding);
+  // graphics.text(`FPS: ${p.frameRate().toFixed(2)}`, p.width - padding, padding);
 
   p.image(graphics, 0, 0);
 });

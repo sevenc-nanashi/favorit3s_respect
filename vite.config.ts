@@ -34,6 +34,9 @@ export default defineConfig({
   esbuild: {
     target: "es2022",
   },
+  server: {
+    port: 5174,
+  },
   resolve: {
     alias: {
       "~": "/src",

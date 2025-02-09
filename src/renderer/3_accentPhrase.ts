@@ -2,10 +2,13 @@ import type { Note } from "@tonejs/midi/dist/Note";
 import type p5 from "p5";
 import { dotUnit } from "../const";
 import { easeOutQuint } from "../easing";
-import { midi } from "../midi";
+import { midi, timelineMid } from "../midi";
 import type { State } from "../state";
 
 const track = midi.tracks.find((track) => track.name === "Accent Phrase")!;
+const apSection = timelineMid.tracks.find(
+  (track) => track.name === "ap_section",
+)!;
 
 const getSections = () => {
   let lastSection: { notes: Note[] } = { notes: [] };
@@ -13,9 +16,15 @@ const getSections = () => {
   for (const note of track.notes) {
     if (
       lastSection.notes.length > 0 &&
-      midi.header.ticksToMeasures(note.ticks) -
+      (midi.header.ticksToMeasures(note.ticks) -
         midi.header.ticksToMeasures(lastSection.notes[0].ticks) >=
-        1
+        1 ||
+        apSection.notes.findLastIndex(
+          (section) => section.ticks <= note.ticks,
+        ) !==
+          apSection.notes.findLastIndex(
+            (section) => section.ticks <= lastSection.notes[0].ticks,
+          ))
     ) {
       lastSection = { notes: [] };
       sections.push(lastSection);
@@ -34,6 +43,9 @@ const topMidi = 98;
 const noteHeight = dotUnit * 2;
 const fadeOutDuration = 0.1;
 export const draw = import.meta.hmrify((p: p5, state: State) => {
+  const currentApSectionIndex = apSection.notes.findLastIndex(
+    (section) => section.ticks <= state.currentTick,
+  );
   const currentSection = sections.find(
     (section) =>
       midi.header.ticksToMeasures(state.currentTick) >=
@@ -48,7 +60,10 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
             section.notes[section.notes.length - 1].ticks +
               section.notes[section.notes.length - 1].durationTicks,
           ) +
-            fadeOutDuration),
+            fadeOutDuration) &&
+      apSection.notes.findLastIndex(
+        (s) => s.ticks <= section.notes[0].ticks,
+      ) === currentApSectionIndex,
   );
 
   if (!currentSection) return;
