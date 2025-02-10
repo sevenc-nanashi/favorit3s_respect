@@ -1,7 +1,7 @@
 import type p5 from "p5";
 import audio from "./assets/main.wav?url";
 import { bg, frameRate, mainFont } from "./const.ts";
-import { startCapturer, stopCapturer, state as captureState } from "p5-frame-capturer";
+import { startCapturer, state as captureState } from "p5-frame-capturer";
 import type { State } from "./state.ts";
 import { useGraphicContext } from "./utils.ts";
 
@@ -46,9 +46,6 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
 
     if (captureState.isCapturing) {
       state.currentFrame = captureState.frameCount;
-      if (state.currentFrame >= frameRate * (audioElement.duration + 5)) {
-        stopCapturer();
-      }
     } else {
       state.currentFrame = Math.floor(audioElement.currentTime * frameRate) + 2;
     }
@@ -104,6 +101,19 @@ const keydown = (p: p5, state: State) => (e: KeyboardEvent) => {
   }
   if (e.key === "ArrowDown") {
     audioElement.volume -= 0.1;
+  }
+  if (e.key === "r") {
+    startCapturer(p, {
+      format: "webpLossless",
+      frames: (audioElement.duration + 5) * frameRate,
+      onFinished: () => {
+        fetch(`https://ntfy.sh/${import.meta.env.VITE_NTFY_TOPIC}`, {
+          method: "POST",
+          body: "All frames are captured!",
+          mode: "no-cors",
+        });
+      },
+    });
   }
 };
 
