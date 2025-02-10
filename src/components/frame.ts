@@ -33,8 +33,7 @@ export const drawFrame = (
         ]);
         backVertices.push([
           x + size / 2 + weight,
-          y +
-            p.lerp(-weight, size + weight * 2, (absProgress - 1 / 8) / (2 / 8)),
+          y + p.lerp(-weight, size + weight, (absProgress - 1 / 8) / (2 / 8)),
         ]);
         return;
       }

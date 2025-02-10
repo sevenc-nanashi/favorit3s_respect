@@ -39,8 +39,8 @@ importers:
         specifier: ^1.11.0
         version: 1.11.0
       p5-frame-capturer:
-        specifier: ^0.4.0
-        version: 0.4.0
+        specifier: ^0.4.1
+        version: 0.4.1
       pixelsort:
         specifier: link:pixelsort/pkg
         version: link:pixelsort/pkg
@@ -899,8 +899,8 @@ packages:
     engines: {node: ^18.17.0 || >=20.5.0, npm: '>= 9'}
     hasBin: true
 
-  p5-frame-capturer@0.4.0:
-    resolution: {integrity: sha512-xc5YzTzipAqgajNhHn/OvATSzxeenTo5Em2W24IseKeijcNxMIVrpa0rEtwzmXxkP6bNwx8nNYaryIswWQDTsA==}
+  p5-frame-capturer@0.4.1:
+    resolution: {integrity: sha512-4q7QkOYgbK667CR9HTfYOQjtzYgOxD9iUZCOKBqVhOHN4fFDbjQUf3bncfkBuAWaR8QxoUS+nvGpvghQVmZcCA==}
 
   p5@1.11.0:
     resolution: {integrity: sha512-UgjQK88M+QUjsGpZgS5ZoyY8AH6Ilmjil/oxWXA7hroe1yXBG+nYKae+fpn8gga71kKyZHumL234BNZekaqAHg==}
@@ -1628,7 +1628,7 @@ snapshots:
       shell-quote: 1.8.1
       which: 5.0.0
 
-  p5-frame-capturer@0.4.0:
+  p5-frame-capturer@0.4.1:
     dependencies:
       vanjs-core: 1.5.3
     optionalDependencies:
