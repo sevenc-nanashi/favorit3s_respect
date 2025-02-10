@@ -1,12 +1,8 @@
-# my_p5_template
+# favorit3s.respect
 
-てんぷれ
-
-## 配布
-
-Releasesを参照してください。\
-<https://github.com/sevenc-nanashi/melodic_circle/releases/latest>
+ニコニコ：(TODO)
 
 ## ライセンス
 
-MIT LicenseまたはCC-BY 4.0のデュアルライセンスです。
+ビジュアライザーはMIT Licenseです。\
+曲の部分はそれぞれの原曲のライセンスに従ってください。
