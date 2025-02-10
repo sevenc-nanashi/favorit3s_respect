@@ -39,8 +39,8 @@ importers:
         specifier: ^1.11.0
         version: 1.11.0
       p5-frame-capturer:
-        specifier: link:/home/sevenc7c/p5-frame-capturer/
-        version: link:../../p5-frame-capturer
+        specifier: ^0.3.2
+        version: 0.3.2
       pixelsort:
         specifier: link:pixelsort/pkg
         version: link:pixelsort/pkg
@@ -899,6 +899,9 @@ packages:
     engines: {node: ^18.17.0 || >=20.5.0, npm: '>= 9'}
     hasBin: true
 
+  p5-frame-capturer@0.3.2:
+    resolution: {integrity: sha512-Tn/Ank7bzFnyKTIPlTN+9B3XgFSNmgrnEhCxIYPsMbTyrps4Wwf5NaGgxLdfSY7yYzKRTTlp0xH1WJhcNBL1Ng==}
+
   p5@1.11.0:
     resolution: {integrity: sha512-UgjQK88M+QUjsGpZgS5ZoyY8AH6Ilmjil/oxWXA7hroe1yXBG+nYKae+fpn8gga71kKyZHumL234BNZekaqAHg==}
 
@@ -1002,6 +1005,9 @@ packages:
 
   undici-types@6.19.8:
     resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
+
+  vanjs-core@1.5.3:
+    resolution: {integrity: sha512-NDt++52tE8rA7rcThaFtIJ7C3pEIuB51giOmE9o5dA9Cw3iv+a0tRIVVYP1PGLItXBbEL0wxDTa2VRjjuKIPlw==}
 
   vite-plugin-arraybuffer@0.0.8:
     resolution: {integrity: sha512-F+InDQuxd93YDVRdXTjBr3lydgjyVHSpgRZS4izK/i85Anl5kmbvf2NwJ//XHAccHh1TScfX70MFJfBx/rf3cg==}
@@ -1622,6 +1628,12 @@ snapshots:
       shell-quote: 1.8.1
       which: 5.0.0
 
+  p5-frame-capturer@0.3.2:
+    dependencies:
+      vanjs-core: 1.5.3
+    optionalDependencies:
+      '@types/p5': 1.7.6
+
   p5@1.11.0: {}
 
   pako@2.1.0: {}
@@ -1749,6 +1761,8 @@ snapshots:
   typescript@5.6.3: {}
 
   undici-types@6.19.8: {}
+
+  vanjs-core@1.5.3: {}
 
   vite-plugin-arraybuffer@0.0.8: {}
 

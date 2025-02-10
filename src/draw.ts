@@ -1,7 +1,7 @@
 import type p5 from "p5";
 import audio from "./assets/main.wav?url";
-import { bg, frameRate, mainFont, songLength } from "./const.ts";
-import { startCapturer, state as captureState } from "p5-frame-capturer";
+import { bg, frameRate, mainFont } from "./const.ts";
+import { startCapturer, stopCapturer, state as captureState } from "p5-frame-capturer";
 import type { State } from "./state.ts";
 import { useGraphicContext } from "./utils.ts";
 
@@ -46,6 +46,9 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
 
     if (captureState.isCapturing) {
       state.currentFrame = captureState.frameCount;
+      if (state.currentFrame >= frameRate * (audioElement.duration + 5)) {
+        stopCapturer();
+      }
     } else {
       state.currentFrame = Math.floor(audioElement.currentTime * frameRate) + 2;
     }
