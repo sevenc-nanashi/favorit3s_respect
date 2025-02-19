@@ -49,7 +49,7 @@ export const draw = import.meta.hmrify((p: p5, state: State) => {
 
   const x = p.width * progress * 0.75;
   const udToggle = Math.floor(quantizedMeasure * 4) % 2;
-  for (const lr of [-1, 1]) {
+  for (const lr of [1, -1]) {
     using _context = useGraphicContext(p);
     if (lr === -1) {
       p.scale(-1, 1);

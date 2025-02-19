@@ -39,6 +39,7 @@ const lyrics = lyricsTrack.reduce(
 );
 
 const shiftChars = ["、", "。"];
+const miniShiftChars = ["っ", "ゃ", "ゅ", "ょ", "ぁ", "ぃ", "ぅ", "ぇ", "ぉ"];
 const replacementChars = {
   ー: "｜",
 } as Record<string, string>;
@@ -116,6 +117,13 @@ const verticalText = (
       graphics.rotate(Math.PI / 2);
       graphics.textAlign(graphics.LEFT, graphics.CENTER);
       graphics.text(char, y, -x + graphics.textSize() / 6);
+    } else if (miniShiftChars.includes(char)) {
+      graphics.textAlign(graphics.CENTER, graphics.TOP);
+      graphics.text(
+        char,
+        x + graphics.textSize() / 8,
+        y - graphics.textSize() / 4,
+      );
     } else if (shiftChars.includes(char)) {
       graphics.textAlign(graphics.CENTER, graphics.TOP);
       graphics.text(

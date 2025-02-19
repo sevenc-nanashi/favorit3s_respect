@@ -22,6 +22,7 @@ const gravityMidi = 60;
 const shiftMidi = 61;
 
 const shiftChars = ["、", "。"];
+const miniShiftChars = ["っ", "ゃ", "ゅ", "ょ", "ぁ", "ぃ", "ぅ", "ぇ", "ぉ"];
 
 const doDraw = (
   p: p5.Graphics,
@@ -35,6 +36,10 @@ const doDraw = (
   if (shiftChars.includes(info.char)) {
     centerX -= 36 / 2 + 36 / 6;
     centerY += 36 / 2;
+  }
+  if (miniShiftChars.includes(info.char)) {
+    centerX -= 36 / 8;
+    centerY += 36 / 4;
   }
   p.translate(info.x + xShift, info.y + yShift);
 

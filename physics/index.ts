@@ -52,6 +52,7 @@ const clamp = (value: number, min: number, max: number) =>
 
 const shiftedBodies = [] as number[];
 const shiftChars = ["、", "。"];
+const miniShiftChars = ["っ", "ゃ", "ゅ", "ょ", "ぁ", "ぃ", "ぅ", "ぇ", "ぉ"];
 const smallBodies = [] as number[];
 const smallChars = ["、", "。", "っ", "ゃ", "ゅ", "ょ"];
 
@@ -111,6 +112,10 @@ for (let cy = 0; cy < image.height; cy += imageGridUnit) {
     if (shiftChars.includes(char)) {
       xShift = (size * imageGridUnit) / 2 + size;
       yShift = (-size * imageGridUnit) / 2;
+    }
+    if (miniShiftChars.includes(char)) {
+      xShift = (size * imageGridUnit) / 8;
+      yShift = (-size * imageGridUnit) / 4;
     }
     const color = `rgb(
       ${Math.round(128 + Math.random() * 128)},

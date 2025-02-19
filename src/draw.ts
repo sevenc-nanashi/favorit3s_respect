@@ -103,9 +103,15 @@ const keydown = (p: p5, state: State) => (e: KeyboardEvent) => {
     audioElement.volume -= 0.1;
   }
   if (e.key === "r") {
+    p.drawingContext = p.canvas.getContext("2d", {
+      desynchronized: true,
+      willReadFrequently: true,
+    });
+    p._renderer.drawingContext = p.drawingContext;
     startCapturer(p, {
       format: "webpLossless",
       frames: (audioElement.duration + 5) * frameRate,
+      parallelWriteLimit: 0,
       onFinished: () => {
         fetch(`https://ntfy.sh/${import.meta.env.VITE_NTFY_TOPIC}`, {
           method: "POST",
