@@ -1,6 +1,6 @@
 # favorit3s.respect
 
-ニコニコ：(TODO)
+ニコニコ：https://www.nicovideo.jp/watch/sm44635263?ref=nicoiphone_other
 
 ## ライセンス
 
